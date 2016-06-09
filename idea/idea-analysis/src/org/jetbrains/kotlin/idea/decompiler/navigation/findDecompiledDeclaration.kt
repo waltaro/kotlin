@@ -78,10 +78,11 @@ private fun findCandidateDeclarationsInIndex(
         referencedDescriptor: DeclarationDescriptor
 ): Collection<KtDeclaration?> {
     val libraryClassFilesScope = KotlinSourceFilterScope.libraryClassFiles(GlobalSearchScope.allScope(project), project)
-    // NOTE: using this scope here and getNoScopeWrap below is hopefully temporary and will be removed after refactoring
-    //   of searching logic
+    // NOTE: using this scope here is hopefully temporary and will be removed after refactoring of searching logic
     val scriptsScope = KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
-    val scope = scriptsScope?.let { GlobalSearchScope.union( arrayOf(libraryClassFilesScope, it)) } ?: libraryClassFilesScope
+    val scope = if (scriptsScope != GlobalSearchScope.EMPTY_SCOPE)
+        GlobalSearchScope.union(kotlin.arrayOf(scriptsScope, libraryClassFilesScope))
+    else libraryClassFilesScope
 
     val containingClass = DescriptorUtils.getParentOfType(referencedDescriptor, ClassDescriptor::class.java, false)
     if (containingClass != null) {
