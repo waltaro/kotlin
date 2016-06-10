@@ -124,7 +124,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val scriptDefinition = getScriptDefinition(virtualFile, project)
     if (scriptDefinition != null)
-        return ScriptModuleInfo(project, module, virtualFile, scriptDefinition)
+        return ScriptModuleInfo(project, virtualFile, scriptDefinition, getScriptExtraImports(virtualFile, project))
 
     return NotUnderContentRootModuleInfo
 }
