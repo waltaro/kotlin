@@ -34,6 +34,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.utils.alwaysNull
@@ -81,6 +82,8 @@ interface IdeaModuleInfo : ModuleInfo {
 
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = mapOf(OriginCapability to moduleOrigin)
+
+    override fun dependencies(): List<IdeaModuleInfo>
 }
 
 private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
@@ -299,31 +302,20 @@ internal data class ScriptModuleInfo(val project: Project, val scriptFile: Virtu
 
     override val name: Name = Name.special("<$SCRIPT_NAME_PREFIX${scriptDefinition.name}>")
 
-    override fun contentScope(): ScriptModuleSearchScope {
-        val dependenciesRoots = dependenciesRoots()
-        return ScriptModuleSearchScope(
-                scriptFile,
-                if (dependenciesRoots.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
-                else GlobalSearchScope.union(dependenciesRoots.map { FileLibraryScope(project, it) }.toTypedArray()))
-    }
+    override fun contentScope() = GlobalSearchScope.fileScope(project, scriptFile)
 
-    private fun dependenciesRoots(): List<VirtualFile> {
-        // TODO: find out whether it should be cashed (some changes listener should be implemented for the cached roots)
-        val jarfs = StandardFileSystems.jar()
-        return scriptDefinition.getDependenciesFor(scriptFile, project)?.classpath
-                       ?.map { it.canonicalFile }
-                       ?.distinct()
-                       ?.mapNotNull {
-                           // TODO: ensure that the entries are checked elsewhere, so diagnostics is delivered to a user if files are not correctly specified
-                           if (it.isFile)
-                               jarfs.findFileByPath(it.absolutePath + URLUtil.JAR_SEPARATOR) ?: null // diag: Classpath entry points to a file that is not a JAR archive
-                           else
-                               StandardFileSystems.local().findFileByPath(it.absolutePath) ?: null // diag: Classpath entry points to a non-existent location
-                       }
-               ?: emptyList()
-    }
+    override fun dependencies() = listOf(this, ScriptDependenciesModuleInfo(project))
+}
 
+data class ScriptDependenciesModuleInfo(val project: Project): IdeaModuleInfo {
     override fun dependencies() = listOf(this)
+
+    override val name = Name.special("<Script dependencies>")
+
+    override fun contentScope() = KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+
+    override val moduleOrigin: ModuleOrigin
+        get() = ModuleOrigin.LIBRARY
 }
 
 class FileLibraryScope(project: Project, private val libraryRoot: VirtualFile) : GlobalSearchScope(project) {
