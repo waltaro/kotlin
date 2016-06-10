@@ -26,6 +26,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
+import org.jetbrains.kotlin.idea.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 private val classFileLike = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType)
@@ -33,6 +34,7 @@ private val classFileLike = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFile
 object ProjectRootsUtil {
     @JvmStatic fun isInContent(project: Project, file: VirtualFile, includeProjectSource: Boolean,
                                includeLibrarySource: Boolean, includeLibraryClasses: Boolean,
+                               includeScriptDependencies: Boolean,
                                fileIndex: ProjectFileIndex = ProjectFileIndex.SERVICE.getInstance(project),
                                isJsProjectRef: Ref<Boolean?>? = null): Boolean {
         if (includeProjectSource && fileIndex.isInSourceContent(file)) {
@@ -43,7 +45,12 @@ object ProjectRootsUtil {
         val canContainClassFiles = file.fileType == ArchiveFileType.INSTANCE || file.isDirectory
         val isClassFile = file.fileType in classFileLike
 
-        if ((includeLibraryClasses && (isClassFile || canContainClassFiles) && fileIndex.isInLibraryClasses(file)) ||
+        //TODO_R: unreadable
+        if ((includeLibraryClasses &&
+             (isClassFile || canContainClassFiles)
+             && (fileIndex.isInLibraryClasses(file) ||
+                 (includeScriptDependencies && KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope().contains(file))))
+            ||
             (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))) {
 
             return true
@@ -65,7 +72,8 @@ object ProjectRootsUtil {
             element: PsiElement,
             includeProjectSource: Boolean,
             includeLibrarySource: Boolean,
-            includeLibraryClasses: Boolean
+            includeLibraryClasses: Boolean,
+            includeScriptDependencies: Boolean
     ): Boolean {
         return runReadAction {
             val virtualFile = when (element) {
@@ -74,39 +82,39 @@ object ProjectRootsUtil {
                               } ?: return@runReadAction false
 
             val project = element.project
-            return@runReadAction isInContent(project, virtualFile, includeProjectSource, includeLibrarySource, includeLibraryClasses)
+            return@runReadAction isInContent(project, virtualFile, includeProjectSource, includeLibrarySource, includeLibraryClasses, includeScriptDependencies)
         }
     }
 
     @JvmStatic fun isInProjectSource(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false)
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false, includeScriptDependencies = false)
     }
 
     @JvmStatic fun isProjectSourceFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false)
+        return isInContent(project, file, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false, includeScriptDependencies = false)
     }
 
     @JvmStatic fun isInProjectOrLibSource(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = false)
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = false, includeScriptDependencies = false)
     }
 
     @JvmStatic fun isInProjectOrLibraryContent(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = true)
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = true, includeScriptDependencies = true)
     }
 
     @JvmStatic fun isInProjectOrLibraryClassFile(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = true)
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = true, includeScriptDependencies = true)
     }
 
     @JvmStatic fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = false, includeLibraryClasses = true)
+        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = false, includeLibraryClasses = true, includeScriptDependencies = true)
     }
 
     @JvmStatic fun isLibrarySourceFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = false)
+        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = false, includeScriptDependencies = true)
     }
 
     @JvmStatic fun isLibraryFile(project: Project, file: VirtualFile): Boolean {
-        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = true)
+        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = true, includeScriptDependencies = true)
     }
 }
