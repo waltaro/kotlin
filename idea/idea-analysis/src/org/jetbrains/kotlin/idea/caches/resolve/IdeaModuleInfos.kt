@@ -23,7 +23,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -31,15 +30,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.SmartList
-import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.utils.alwaysNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
-import java.io.File
 import java.lang.reflect.Method
 import java.util.*
 
@@ -294,9 +291,8 @@ class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSear
     override fun hashCode() = scriptFile.hashCode() * 73 * super.hashCode()
 }
 
-internal data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
-                                     val scriptDefinition: KotlinScriptDefinition,
-                                     val scriptExtraImports: List<KotlinScriptExtraImport>) : IdeaModuleInfo {
+data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
+                            val scriptDefinition: KotlinScriptDefinition) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
