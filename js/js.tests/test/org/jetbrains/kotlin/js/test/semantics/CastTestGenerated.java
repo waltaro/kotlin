@@ -47,6 +47,18 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("castToExtensionKMutableProperty1.kt")
+    public void testCastToExtensionKMutableProperty1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToExtensionKMutableProperty1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("castToExtensionKProperty1.kt")
+    public void testCastToExtensionKProperty1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToExtensionKProperty1.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("castToFunction.kt")
     public void testCastToFunction() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToFunction.kt");
@@ -71,6 +83,30 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("castToKMutableProperty0.kt")
+    public void testCastToKMutableProperty0() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToKMutableProperty0.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("castToKMutableProperty1.kt")
+    public void testCastToKMutableProperty1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToKMutableProperty1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("castToKProperty0.kt")
+    public void testCastToKProperty0() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToKProperty0.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("castToKProperty1.kt")
+    public void testCastToKProperty1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToKProperty1.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("castToNotNull.kt")
     public void testCastToNotNull() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNotNull.kt");
@@ -86,6 +122,12 @@ public class CastTestGenerated extends AbstractCastTest {
     @TestMetadata("noRuntimeTypeCheck.kt")
     public void testNoRuntimeTypeCheck() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/noRuntimeTypeCheck.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("primitiveToClass.kt")
+    public void testPrimitiveToClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/primitiveToClass.kt");
         doTest(fileName);
     }
 
