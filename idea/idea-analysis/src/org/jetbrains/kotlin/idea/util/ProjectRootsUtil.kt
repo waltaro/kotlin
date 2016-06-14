@@ -25,8 +25,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
+import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
-import org.jetbrains.kotlin.idea.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 private val classFileLike = listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType)
