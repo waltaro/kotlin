@@ -50,6 +50,7 @@
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
+        <kotlin.compiler.jdk>${env.JDK_16}</kotlin.compiler.jdk>
 
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -79,6 +80,8 @@
 
         <module>tools/runtime</module>
         <module>stdlib</module>
+        <module>stdlib/jdk7</module>
+        <module>stdlib/jdk8</module>
         <module>tools/kotlin-reflect</module>
         <module>tools/kotlin-osgi-bundle</module>
 
@@ -148,6 +151,11 @@
                     <version>2.7</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>1.4.1</version>
+                </plugin>
+                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.7</version>
@@ -161,6 +169,7 @@
                 <version>${surefire-version}</version>
                 <configuration>
                     <forkMode>once</forkMode>
+                    <jvm>${env.JDK_16}/bin/java</jvm>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                     <failIfNoTests>false</failIfNoTests>
