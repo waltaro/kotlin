@@ -123,7 +123,7 @@ class ReflectionTypes(module: ModuleDescriptor) {
             val descriptor = type.constructor.declarationDescriptor ?: return false
             val segments = DescriptorUtils.getFqName(descriptor).pathSegments()
             return segments.size == 3 && segments.subList(0, 2) == KOTLIN_REFLECT_FQ_NAME.pathSegments() &&
-                    segments.last().let { !it.isSpecial && (it.isProperty("KProperty") || it.isProperty("KMutableProperty"))  }
+                    segments.last().let { it.isProperty("KProperty") || it.isProperty("KMutableProperty")  }
         }
 
         private fun Name.isProperty(baseName: String) = asString().startsWith(baseName) && asString() != baseName
