@@ -43,15 +43,18 @@ object ProjectRootsUtil {
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
         val canContainClassFiles = file.fileType == ArchiveFileType.INSTANCE || file.isDirectory
-        val isClassFile = file.fileType in classFileLike
+        val isClassFile = file.fileType in classFileLike || file.extension == "kotlin_module" // TODO_R:
 
+        val scriptConfigurationManager = KotlinScriptConfigurationManager.getInstance(project)
         //TODO_R: unreadable
         if ((includeLibraryClasses &&
              (isClassFile || canContainClassFiles)
              && (fileIndex.isInLibraryClasses(file) ||
-                 (includeScriptDependencies && KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope().contains(file))))
+                 (includeScriptDependencies && file in scriptConfigurationManager.getAllScriptsClasspathScope())))
             ||
-            (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))) {
+            (includeLibrarySource && !isClassFile && (fileIndex.isInLibrarySource(file)
+                                                      ||
+                                                      (includeScriptDependencies && file in scriptConfigurationManager.getAllLibrarySourcesScope())))) {
 
             return true
         }
@@ -103,7 +106,7 @@ object ProjectRootsUtil {
     }
 
     @JvmStatic fun isInProjectOrLibraryClassFile(element: PsiElement): Boolean {
-        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = true, includeScriptDependencies = true)
+        return isInContent(element, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = true, includeScriptDependencies = false)
     }
 
     @JvmStatic fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {

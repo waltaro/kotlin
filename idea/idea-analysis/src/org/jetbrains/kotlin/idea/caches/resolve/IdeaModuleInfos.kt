@@ -33,6 +33,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.utils.alwaysNull
@@ -308,7 +309,7 @@ data class ScriptDependenciesModuleInfo(val project: Project): IdeaModuleInfo {
 
     override val name = Name.special("<Script dependencies>")
 
-    override fun contentScope() = KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+    override fun contentScope() = KotlinSourceFilterScope.libraryClassFiles(KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope(), project)
 
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY

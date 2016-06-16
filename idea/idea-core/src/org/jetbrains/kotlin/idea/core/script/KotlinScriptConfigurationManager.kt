@@ -26,8 +26,15 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassOwner
+import com.intellij.psi.PsiElement
+import com.intellij.psi.ResolveScopeProvider
+import com.intellij.psi.impl.compiled.*
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.NonClasspathDirectoriesScope
+import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.util.indexing.IndexableSetContributor
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.caches.resolve.FileLibraryScope
@@ -53,25 +60,29 @@ class KotlinScriptConfigurationManager(
     }
 
     init {
-        reloadScriptDefinitions()
-        // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
-        runReadAction { cacheAllScriptsExtraImports() }
+        dumbService.runWhenSmart {
+            reloadScriptDefinitions()
+            // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
+            runReadAction { cacheAllScriptsExtraImports() }
 
-        project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
-            override fun after(events: List<VFileEvent>) {
-                val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache( events.mapNotNull { it.file })?.any() ?: false
-                if (isChanged) {
-                    // TODO: consider more fine-grained update
-                    cacheLock.write {
-                        allScriptsClasspathCache = null
+            project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+                override fun after(events: List<VFileEvent>) {
+                    val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(events.mapNotNull { it.file })?.any() ?: false
+                    if (isChanged) {
+                        // TODO: consider more fine-grained update
+                        cacheLock.write {
+                            allScriptsClasspathCache = null
+                            allLibrarySourcesCache = null
+                        }
+                        notifyRootsChanged()
                     }
-                    notifyRootsChanged()
                 }
-            }
-        })
+            })
+        }
     }
 
     private var allScriptsClasspathCache: List<VirtualFile>? = null
+    private var allLibrarySourcesCache: List<VirtualFile>? = null
     private val cacheLock = ReentrantReadWriteLock()
 
     private fun notifyRootsChanged() {
@@ -100,6 +111,21 @@ class KotlinScriptConfigurationManager(
         return allScriptsClasspathCache ?: emptyList()
     }
 
+    fun getAllLibrarySources(): List<VirtualFile> = cacheLock.read {
+        if (allLibrarySourcesCache == null) {
+            dumbService.runWhenSmart {
+                cacheLock.write {
+                    allLibrarySourcesCache =
+                            (scriptExternalImportsProvider?.getKnownSourceRoots() ?: emptyList())
+                                    .distinct()
+                                    .mapNotNull { it.classpathEntryToVfs() }
+                }
+                notifyRootsChanged()
+            }
+        }
+        return allLibrarySourcesCache ?: emptyList()
+    }
+
     private fun File.classpathEntryToVfs(): VirtualFile =
             if (isDirectory)
                 StandardFileSystems.local()?.findFileByPath(this.canonicalPath) ?: throw FileNotFoundException("Classpath entry points to a non-existent location: ${this}")
@@ -108,6 +134,13 @@ class KotlinScriptConfigurationManager(
 
     fun getAllScriptsClasspathScope(): GlobalSearchScope {
         return getAllScriptsClasspath().let { cp ->
+            if (cp.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
+            else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
+        }
+    }
+
+    fun getAllLibrarySourcesScope(): GlobalSearchScope {
+        return getAllLibrarySources().let { cp ->
             if (cp.isEmpty()) GlobalSearchScope.EMPTY_SCOPE
             else GlobalSearchScope.union(cp.map { FileLibraryScope(project, it) }.toTypedArray())
         }
@@ -127,8 +160,8 @@ class KotlinScriptConfigurationManager(
         scriptExternalImportsProvider?.apply {
             invalidateCaches()
             cacheExternalImports(
-                scriptDefinitionProvider.getAllKnownFileTypes()
-                        .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) })
+                    scriptDefinitionProvider.getAllKnownFileTypes()
+                            .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) })
         }
     }
 
@@ -142,9 +175,65 @@ class KotlinScriptConfigurationManager(
 
 class KotlinScriptDependenciesIndexableSetContributor : IndexableSetContributor() {
 
-    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> =
-            KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspath().toSet()
+    override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> {
+        val manager = KotlinScriptConfigurationManager.getInstance(project)
+        return (manager.getAllScriptsClasspath() + manager.getAllLibrarySources()).toSet()
+    }
 
     override fun getAdditionalRootsToIndex(): Set<VirtualFile> = emptySet()
 }
 
+class ScriptDependencySourceNavigationPolicy : ClsCustomNavigationPolicyEx() {
+    override fun getNavigationElement(clsClass: ClsClassImpl): PsiClass? {
+        val containingClass = clsClass.containingClass as? ClsClassImpl
+        if (containingClass != null) {
+            return getNavigationElement(containingClass)?.findInnerClassByName(clsClass.name, false)
+        }
+
+        val clsFileImpl = clsClass.containingFile as? ClsFileImpl ?: return null
+        return getFileNavigationElement(clsFileImpl)?.classes?.singleOrNull()
+    }
+
+    override fun getNavigationElement(clsMethod: ClsMethodImpl): PsiElement? {
+        val clsClass = getNavigationElement(clsMethod.containingClass as ClsClassImpl) ?: return null
+        return clsClass.findMethodsByName(clsMethod.name, false)
+                .firstOrNull { MethodSignatureUtil.areParametersErasureEqual(it, clsMethod) }
+    }
+
+    override fun getNavigationElement(clsField: ClsFieldImpl): PsiElement? {
+        val srcClass = getNavigationElement(clsField.containingClass as ClsClassImpl) ?: return null
+        return srcClass.findFieldByName(clsField.name, false)
+    }
+
+    override fun getFileNavigationElement(file: ClsFileImpl): PsiClassOwner? {
+        val virtualFile = file.virtualFile
+        val project = file.project
+
+        val kotlinScriptConfigurationManager = KotlinScriptConfigurationManager.getInstance(project)
+        if (virtualFile !in kotlinScriptConfigurationManager.getAllScriptsClasspathScope()) return null
+
+        val sourceFileName = (file.classes.first() as ClsClassImpl).sourceFileName
+        val packageName = file.packageName
+        val relativePath = if (packageName.isEmpty()) sourceFileName else packageName.replace('.', '/') + '/' + sourceFileName
+
+        for (root in kotlinScriptConfigurationManager.getAllLibrarySources()) {
+            val sourceFile = root.findFileByRelativePath(relativePath)
+            if (sourceFile != null && sourceFile.isValid) {
+                val sourcePsi = file.manager.findFile(sourceFile)
+                if (sourcePsi is PsiClassOwner) {
+                    return sourcePsi
+                }
+            }
+        }
+        return null
+    }
+}
+
+// TODO: implement FileResolveScopeProvider instead via KtFile
+class KotlinScriptResolveScopeProvider: ResolveScopeProvider() {
+    override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
+        KotlinScriptDefinitionProvider.getInstance(project).findScriptDefinition(file) ?: return null
+        // TODO: actually all dependencies for this particular file/ also should include the file itself
+        return KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+    }
+}

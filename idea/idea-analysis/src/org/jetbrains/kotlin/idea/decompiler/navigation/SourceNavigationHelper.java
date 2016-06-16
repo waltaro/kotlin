@@ -31,6 +31,7 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.EverythingGlobalScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.util.containers.ContainerUtil;
@@ -104,8 +105,8 @@ public class SourceNavigationHelper {
 
         Project project = declaration.getProject();
         return includeLibrarySources
-               ? KotlinSourceFilterScope.librarySources(GlobalSearchScope.allScope(project), project)
-               : KotlinSourceFilterScope.libraryClassFiles(GlobalSearchScope.allScope(project), project);
+               ? KotlinSourceFilterScope.librarySources(new EverythingGlobalScope(project), project)
+               : KotlinSourceFilterScope.libraryClassFiles(new EverythingGlobalScope(project), project);
     }
 
     private static List<KtFile> getContainingFiles(@NotNull Iterable<KtNamedDeclaration> declarations) {
