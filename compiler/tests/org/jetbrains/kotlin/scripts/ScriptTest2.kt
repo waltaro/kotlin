@@ -120,7 +120,13 @@ class TestKotlinScriptDependenciesResolver : ScriptDependenciesResolver {
 
     private val kotlinPaths by lazy { PathUtil.getKotlinPathsForCompiler() }
 
-    override fun resolve(projectRoot: File?, scriptFile: File?, annotations: Iterable<KtAnnotationEntry>, context: Map<String, Any?>?): KotlinScriptExternalDependencies? {
+    override fun resolve(projectRoot: File?,
+                         scriptFile: File?,
+                         annotations: Iterable<KtAnnotationEntry>,
+                         context: Map<String, Any?>?,
+                         previousDependencies: KotlinScriptExternalDependencies?
+    ): KotlinScriptExternalDependencies?
+    {
         val anns = annotations.map { parseAnnotation(it) }.filter { it.name == depends::class.simpleName }
         val cp = anns.flatMap {
             it.value.mapNotNull {

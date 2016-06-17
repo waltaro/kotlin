@@ -36,7 +36,12 @@ import kotlin.reflect.KClass
 annotation class ScriptFilePattern(val pattern: String)
 
 interface ScriptDependenciesResolver {
-    fun resolve(projectRoot: File?, scriptFile: File?, annotations: Iterable<KtAnnotationEntry>, context: Map<String, Any?>?): KotlinScriptExternalDependencies? = null
+    fun resolve(projectRoot: File?,
+                scriptFile: File?,
+                annotations: Iterable<KtAnnotationEntry>,
+                context: Map<String, Any?>?,
+                previousDependencies: KotlinScriptExternalDependencies? = null
+    ): KotlinScriptExternalDependencies? = null
 }
 
 @Target(AnnotationTarget.CLASS)
@@ -65,9 +70,9 @@ data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val
         template.annotations.mapNotNull { it as? ScriptDependencyResolver }.map { it.resolver.constructors.first().call() }
     }
 
-    override fun <TF> getDependenciesFor(file: TF, project: Project): KotlinScriptExternalDependencies? {
+    override fun <TF> getDependenciesFor(file: TF, project: Project, previousDependencies: KotlinScriptExternalDependencies?): KotlinScriptExternalDependencies? {
         val fileAnnotations = getAnnotationEntries(file, project)
-        val fileDeps = dependenciesResolvers.mapNotNull { it.resolve(project.basePath?.let { File(it) }, File(getFilePath(file)), fileAnnotations, context) }
+        val fileDeps = dependenciesResolvers.mapNotNull { it.resolve(project.basePath?.let { File(it) }, File(getFilePath(file)), fileAnnotations, context, previousDependencies) }
         return KotlinScriptExternalDependenciesUnion(fileDeps)
     }
 
