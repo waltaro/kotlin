@@ -34,7 +34,7 @@ interface ScriptTemplateProvider {
 
     val dependenciesClasspath: Iterable<String>
 
-    val context: Any?
+    val context: Map<String, Any?>?
 
     companion object {
         val EP_NAME = ExtensionPointName.create<ScriptTemplateProvider>("org.jetbrains.kotlin.scriptTemplateProvider")

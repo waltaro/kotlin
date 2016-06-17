@@ -36,14 +36,14 @@ import kotlin.reflect.KClass
 annotation class ScriptFilePattern(val pattern: String)
 
 interface ScriptDependenciesResolver {
-    fun resolve(projectRoot: File?, scriptFile: File?, annotations: Iterable<KtAnnotationEntry>, context: Any?): KotlinScriptExternalDependencies? = null
+    fun resolve(projectRoot: File?, scriptFile: File?, annotations: Iterable<KtAnnotationEntry>, context: Map<String, Any?>?): KotlinScriptExternalDependencies? = null
 }
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptDependencyResolver(val resolver: KClass<out ScriptDependenciesResolver>)
 
-data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val context: Any?) : KotlinScriptDefinition {
+data class KotlinScriptDefinitionFromTemplate(val template: KClass<out Any>, val context: Map<String, Any?>?) : KotlinScriptDefinition {
     override val name = template.simpleName!!
 
     override fun getScriptParameters(scriptDescriptor: ScriptDescriptor): List<ScriptParameter> =
