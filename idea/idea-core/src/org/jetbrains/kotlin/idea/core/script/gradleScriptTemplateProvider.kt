@@ -22,14 +22,13 @@ import org.jetbrains.kotlin.script.ScriptTemplateProvider
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import java.io.File
-import java.util.function.Consumer
 
 class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationManager?): ScriptTemplateProvider {
 
     private val gradleHome: File? = project.basePath?.let { gim?.getGradleHome(project, it) }
     private val gradleLibsPath: File? = gradleHome?.let { File(it, "lib") }?.let { if (it.exists()) it else null }
-    private val projectActionExecutor = Consumer<Consumer<ProjectConnection>> {
-        action -> GradleExecutionHelper().execute(project.basePath!!, null) { action.accept(it) }
+    private val projectActionExecutor: ((ProjectConnection) -> Unit) -> Unit = { action ->
+        GradleExecutionHelper().execute(project.basePath!!, null) { action(it) }
     }
 
     override val id: String = "Gradle"
