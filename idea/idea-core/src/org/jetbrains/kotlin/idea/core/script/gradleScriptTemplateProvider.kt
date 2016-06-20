@@ -21,15 +21,15 @@ import org.gradle.tooling.ProjectConnection
 import org.jetbrains.kotlin.script.ScriptTemplateProvider
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
-import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import java.io.File
+import java.util.function.Consumer
 
 class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationManager?): ScriptTemplateProvider {
 
     private val gradleHome: File? = project.basePath?.let { gim?.getGradleHome(project, it) }
     private val gradleLibsPath: File? = gradleHome?.let { File(it, "lib") }?.let { if (it.exists()) it else null }
-    private val connection by lazy {
-        GradleExecutionHelper().execute(project.projectFilePath!!, null) { it }
+    private val projectActionExecutor = Consumer<Consumer<ProjectConnection>> {
+        action -> GradleExecutionHelper().execute(project.projectFilePath!!, null) { action.accept(it) }
     }
 
     override val id: String = "Gradle"
@@ -41,9 +41,10 @@ class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationMana
             gradleLibsPath?.listFiles { file -> file.extension == "jar" && depLibsPrefixes.any { file.name.startsWith(it) } }
                 ?.map { it.canonicalPath }
                 ?: emptyList()
-    override val context: Any? = hashMapOf("gradleHome" to gradleHome, "projectConnection" to connection)
+    override val context: Any? = hashMapOf("gradleHome" to gradleHome, "projectActionExecutor" to projectActionExecutor)
 
     companion object {
         private val depLibsPrefixes = listOf("gradle-script-kotlin", "gradle-core")
     }
 }
+
