@@ -29,7 +29,7 @@ class GradleScriptTemplateProvider(project: Project, gim: GradleInstallationMana
     private val gradleHome: File? = project.basePath?.let { gim?.getGradleHome(project, it) }
     private val gradleLibsPath: File? = gradleHome?.let { File(it, "lib") }?.let { if (it.exists()) it else null }
     private val projectActionExecutor = Consumer<Consumer<ProjectConnection>> {
-        action -> GradleExecutionHelper().execute(project.projectFilePath!!, null) { action.accept(it) }
+        action -> GradleExecutionHelper().execute(project.basePath!!, null) { action.accept(it) }
     }
 
     override val id: String = "Gradle"
