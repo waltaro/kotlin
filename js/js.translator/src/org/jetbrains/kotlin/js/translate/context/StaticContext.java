@@ -520,23 +520,10 @@ public final class StaticContext {
 
                     JsNameRef result = getQualifierForParentPackage(((PackageFragmentDescriptor) containingDescriptor).getFqName());
 
-                    String moduleName = getExternalModuleName(descriptor);
-                    if (moduleName == null) {
-                        return result;
-                    }
+                    JsExpression moduleExpression = getModuleExpressionFor(descriptor);
+                    if (moduleExpression == null) return result;
 
-                    if (LibrarySourcesConfig.UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) {
-                        return null;
-                    }
-
-                    JsName moduleId = moduleName.equals(Namer.KOTLIN_LOWER_NAME) ? rootScope.declareName(Namer.KOTLIN_NAME) :
-                                      importedModules.get(moduleName);
-                    if (moduleId == null) {
-                        moduleId = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(moduleName));
-                        importedModules.put(moduleName, moduleId);
-                    }
-
-                    return JsAstUtils.replaceRootReference(result, JsAstUtils.fqnWithoutSideEffects(moduleId, null));
+                    return JsAstUtils.replaceRootReference(result, moduleExpression);
                 }
             };
             Rule<JsExpression> constructorOrCompanionObjectHasTheSameQualifierAsTheClass = new Rule<JsExpression>() {
@@ -631,11 +618,20 @@ public final class StaticContext {
     }
 
     @Nullable
-    private static ClassDescriptor getEnclosing(@Nullable DeclarationDescriptor descriptor) {
-        while (descriptor != null && !(descriptor instanceof ClassDescriptor)) {
-            descriptor = descriptor.getContainingDeclaration();
+    public JsExpression getModuleExpressionFor(@NotNull DeclarationDescriptor descriptor) {
+        String moduleName = getExternalModuleName(descriptor);
+        if (moduleName == null) return null;
+
+        if (LibrarySourcesConfig.UNKNOWN_EXTERNAL_MODULE_NAME.equals(moduleName)) return null;
+
+        JsName moduleId = moduleName.equals(Namer.KOTLIN_LOWER_NAME) ? rootScope.declareName(Namer.KOTLIN_NAME) :
+                          importedModules.get(moduleName);
+        if (moduleId == null) {
+            moduleId = rootScope.declareFreshName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(moduleName));
+            importedModules.put(moduleName, moduleId);
         }
-        return (ClassDescriptor) descriptor;
+
+        return JsAstUtils.fqnWithoutSideEffects(moduleId, null);
     }
 
     private static JsExpression applySideEffects(JsExpression expression, DeclarationDescriptor descriptor) {

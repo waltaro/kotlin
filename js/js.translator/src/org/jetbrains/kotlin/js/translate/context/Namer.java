@@ -446,13 +446,6 @@ public final class Namer {
         return callSetProperty;
     }
 
-    @NotNull
-    public JsExpression getModuleReference(@NotNull JsStringLiteral moduleName) {
-        JsArrayAccess result = new JsArrayAccess(modulesMap, moduleName);
-        MetadataProperties.setSideEffects(result, false);
-        return result;
-    }
-
     public static JsNameRef kotlinLong() {
         return fqnWithoutSideEffects("Long", kotlinObject());
     }

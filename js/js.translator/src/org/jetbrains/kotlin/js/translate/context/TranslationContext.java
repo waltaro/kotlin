@@ -488,4 +488,9 @@ public class TranslationContext {
 
         return staticContext.getScopeForDescriptor(descriptor).declareName(Namer.OUTER_FIELD_NAME);
     }
+
+    @Nullable
+    public JsExpression getModuleExpressionFor(@NotNull DeclarationDescriptor descriptor) {
+        return staticContext.getModuleExpressionFor(descriptor);
+    }
 }
