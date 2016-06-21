@@ -42,7 +42,7 @@ class ReificationArgument(
                     this.arrayDepth + replacement.arrayDepth
             )
 
-    fun reify(replacementAsmType: Type, kotlinType: KotlinType) =
+    fun reify(replacementAsmType: Type, kotlinType: KotlinType): Pair<Type, KotlinType> =
             Pair(Type.getType("[".repeat(arrayDepth) + replacementAsmType), kotlinType.arrayOf(arrayDepth).makeNullableIfNeeded(nullable))
 
     private fun KotlinType.arrayOf(arrayDepth: Int): KotlinType {

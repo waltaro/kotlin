@@ -28,7 +28,7 @@ import kotlin.comparisons.compareBy
 
 object IdeRenderers {
 
-    @JvmField val HTML_AMBIGUOUS_CALLS = Renderer {
+    @JvmField val HTML_AMBIGUOUS_CALLS: DiagnosticParameterRenderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
         val descriptors = calls
                 .map { it.resultingDescriptor }
@@ -39,7 +39,7 @@ object IdeRenderers {
 
     @JvmField val HTML_RENDER_TYPE = SmartTypeRenderer(DescriptorRenderer.HTML)
 
-    @JvmField val HTML_NONE_APPLICABLE_CALLS = Renderer {
+    @JvmField val HTML_NONE_APPLICABLE_CALLS: DiagnosticParameterRenderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
         val context = RenderingContext.Impl(calls.map { it.resultingDescriptor })
         val comparator = compareBy(MemberComparator.INSTANCE) { c: ResolvedCall<*> -> c.resultingDescriptor }

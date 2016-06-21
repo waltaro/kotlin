@@ -141,7 +141,7 @@ class DummyProfiler : Profiler {
 abstract class TotalProfiler : Profiler {
 
     val total = SimplePerfCounters()
-    val threadMXBean = ManagementFactory.getThreadMXBean()
+    val threadMXBean: ThreadMXBean = ManagementFactory.getThreadMXBean()
 
     override fun getCounters(): Map<Any?, PerfCounters> = mapOf()
     override fun getTotalCounters(): PerfCounters = total

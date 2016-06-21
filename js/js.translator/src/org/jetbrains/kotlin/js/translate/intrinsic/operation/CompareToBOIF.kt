@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.translate.operation.OperatorTable
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
 object CompareToBOIF : BinaryOperationIntrinsicFactory {
@@ -64,7 +65,7 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    override fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
+    override fun getSupportTokens(): ImmutableSet<KtSingleValueToken> = OperatorConventions.COMPARISON_OPERATIONS
 
     override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (descriptor.isDynamic()) return CompareToIntrinsic

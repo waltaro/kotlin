@@ -214,7 +214,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
 
     override fun getElementValue(element: KtElement?) = elementsToValues[element]
 
-    override fun getValueElements(value: PseudoValue?) = elementsToValues.getKeysByValue(value) ?: emptyList()
+    override fun getValueElements(value: PseudoValue?): List<KtElement> = elementsToValues.getKeysByValue(value) ?: emptyList()
 
     override fun getUsages(value: PseudoValue?) = valueUsages[value] ?: mutableListOf()
 

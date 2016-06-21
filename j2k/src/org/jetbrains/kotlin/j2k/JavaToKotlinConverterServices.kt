@@ -44,6 +44,6 @@ interface SuperMethodsSearcher {
 
     object Default : SuperMethodsSearcher {
         // use simple findSuperMethods by default because findDeepestSuperMethods requires some service from IDEA
-        override fun findDeepestSuperMethods(method: PsiMethod) = method.findSuperMethods().asList()
+        override fun findDeepestSuperMethods(method: PsiMethod): List<PsiMethod> = method.findSuperMethods().asList()
     }
 }

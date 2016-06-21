@@ -102,7 +102,7 @@ open class JavaAnnotationDescriptor(
 
     override fun getType() = kotlinAnnotationClassDescriptor.defaultType
 
-    override fun getSource() = source
+    override fun getSource(): SourceElement = source
 
     protected val valueParameters: List<ValueParameterDescriptor>
             get() = kotlinAnnotationClassDescriptor.constructors.single().valueParameters

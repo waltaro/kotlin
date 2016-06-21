@@ -74,7 +74,7 @@ class JavaClassObjectAnnotationArgumentImpl(
         private val psiExpression: PsiClassObjectAccessExpression,
         name: Name?
 ) : JavaAnnotationArgumentImpl(name), JavaClassObjectAnnotationArgument {
-    override fun getReferencedType() = JavaTypeImpl.create(psiExpression.operand.type)
+    override fun getReferencedType(): JavaType = JavaTypeImpl.create(psiExpression.operand.type)
 }
 
 class JavaAnnotationAsAnnotationArgumentImpl(

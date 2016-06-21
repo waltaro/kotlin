@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import com.google.common.collect.LinkedListMultimap
+import com.google.common.collect.ListMultimap
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
@@ -85,8 +86,8 @@ abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
 }
 
 class IntervalMetaInfo<T : SplittableInterval<T>> {
-    val intervalStarts = LinkedListMultimap.create<LabelNode, T>()
-    val intervalEnds = LinkedListMultimap.create<LabelNode, T>()
+    val intervalStarts: ListMultimap<LabelNode, T> = LinkedListMultimap.create<LabelNode, T>()
+    val intervalEnds: ListMultimap<LabelNode, T> = LinkedListMultimap.create<LabelNode, T>()
     val allIntervals: ArrayList<T> = arrayListOf()
     val currentIntervals: MutableSet<T> = linkedSetOf()
 
@@ -141,7 +142,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         return splitPair
     }
 
-    fun getInterval(curIns: LabelNode, isOpen: Boolean) =
+    fun getInterval(curIns: LabelNode, isOpen: Boolean): MutableList<T> =
             if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
 }
 

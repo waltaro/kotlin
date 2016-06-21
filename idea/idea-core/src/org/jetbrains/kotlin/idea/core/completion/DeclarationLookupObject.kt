@@ -22,6 +22,7 @@ import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import javax.swing.Icon
 
 interface DeclarationLookupObject : Iconable {
     val psiElement: PsiElement?
@@ -42,6 +43,6 @@ data class PackageLookupObject(val fqName: FqName) : DeclarationLookupObject {
 
     override val isDeprecated: Boolean get() = false
 
-    override fun getIcon(flags: Int) = PlatformIcons.PACKAGE_ICON
+    override fun getIcon(flags: Int): Icon = PlatformIcons.PACKAGE_ICON
 }
 

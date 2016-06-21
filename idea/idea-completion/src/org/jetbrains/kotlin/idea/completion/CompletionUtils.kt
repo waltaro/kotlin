@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.util.Key
+import com.intellij.patterns.CharPattern
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiDocumentManager
@@ -159,7 +160,7 @@ fun shouldCompleteThisItems(prefixMatcher: PrefixMatcher): Boolean {
 
 class ThisItemLookupObject(val receiverParameter: ReceiverParameterDescriptor, val labelName: Name?) : KeywordLookupObject()
 
-fun ThisItemLookupObject.createLookupElement() = createKeywordElement("this", labelName.labelNameToTail(), lookupObject = this)
+fun ThisItemLookupObject.createLookupElement(): LookupElementBuilder = createKeywordElement("this", labelName.labelNameToTail(), lookupObject = this)
         .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(receiverParameter.type))
 
 fun thisExpressionItems(bindingContext: BindingContext, position: KtExpression, prefix: String, resolutionFacade: ResolutionFacade): Collection<ThisItemLookupObject> {
@@ -335,11 +336,11 @@ fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: In
     ShortenReferences.DEFAULT.process(context.file as KtFile, startOffset, endOffset)
 }
 
-infix fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>) = StandardPatterns.and(this, rhs)
-fun <T> ElementPattern<T>.andNot(rhs: ElementPattern<T>) = StandardPatterns.and(this, StandardPatterns.not(rhs))
-infix fun <T> ElementPattern<T>.or(rhs: ElementPattern<T>) = StandardPatterns.or(this, rhs)
+infix fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>): ElementPattern<T> = StandardPatterns.and(this, rhs)
+fun <T> ElementPattern<T>.andNot(rhs: ElementPattern<T>): ElementPattern<T> = StandardPatterns.and(this, StandardPatterns.not(rhs))
+infix fun <T> ElementPattern<T>.or(rhs: ElementPattern<T>): ElementPattern<T> = StandardPatterns.or(this, rhs)
 
-fun singleCharPattern(char: Char) = StandardPatterns.character().equalTo(char)
+fun singleCharPattern(char: Char): CharPattern = StandardPatterns.character().equalTo(char)
 
 fun LookupElement.decorateAsStaticMember(
         memberDescriptor: DeclarationDescriptor,

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -69,7 +70,7 @@ interface ByTypeFilter {
         get() = fuzzyType.singletonOrEmptyList()
 
     object All : ByTypeFilter {
-        override fun matchingSubstitutor(descriptorType: FuzzyType) = TypeSubstitutor.EMPTY
+        override fun matchingSubstitutor(descriptorType: FuzzyType): TypeSubstitutor = TypeSubstitutor.EMPTY
     }
 
     object None : ByTypeFilter {
@@ -689,5 +690,5 @@ class ExpectedInfos(
     private fun Collection<ExpectedInfo>.copyWithNoAdditionalData() = map { it.copy(additionalData = null, itemOptions = ItemOptions.DEFAULT) }
 }
 
-val COMPARISON_TOKENS = setOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
+val COMPARISON_TOKENS: Set<KtSingleValueToken> = setOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
 

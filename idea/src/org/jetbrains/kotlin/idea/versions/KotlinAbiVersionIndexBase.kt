@@ -34,7 +34,7 @@ abstract class KotlinAbiVersionIndexBase<T, V : BinaryVersion>(
         protected val createBinaryVersion: (IntArray) -> V
 ) : ScalarIndexExtension<V>() {
 
-    override fun getName() = ID.create<V, Void>(classOfIndex.canonicalName)
+    override fun getName(): ID<V, Void> = ID.create<V, Void>(classOfIndex.canonicalName)
 
     override fun getKeyDescriptor(): KeyDescriptor<V> = object : KeyDescriptor<V> {
         override fun isEqual(val1: V, val2: V): Boolean = val1 == val2

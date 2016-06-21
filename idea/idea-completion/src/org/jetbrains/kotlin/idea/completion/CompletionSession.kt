@@ -110,7 +110,7 @@ abstract class CompletionSession(
     private val kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart().andNot(singleCharPattern('$'))
     private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart().andNot(singleCharPattern('$'))
 
-    protected val prefix = CompletionUtil.findIdentifierPrefix(
+    protected val prefix: String = CompletionUtil.findIdentifierPrefix(
             parameters.position.containingFile,
             parameters.offset,
             kotlinIdentifierPartPattern or singleCharPattern('@'),

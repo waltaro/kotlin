@@ -70,9 +70,9 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
         override fun calculateLookupItems(context: ExpressionContext) = if (items.size <= 1) null else items
     }
 
-    override fun getText() = QuickFixBundle.message("rename.wrong.reference.text")
+    override fun getText(): String = QuickFixBundle.message("rename.wrong.reference.text")
 
-    override fun getFamilyName() = QuickFixBundle.message("rename.wrong.reference.family")
+    override fun getFamilyName(): String = QuickFixBundle.message("rename.wrong.reference.family")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return super.isAvailable(project, editor, file)

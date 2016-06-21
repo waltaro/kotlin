@@ -39,7 +39,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
     private val frame = context.frameProxy
 
     companion object {
-        val OBJECT_TYPE = Type.getType(Any::class.java)
+        val OBJECT_TYPE: Type = Type.getType(Any::class.java)
     }
 
     fun findValue(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {

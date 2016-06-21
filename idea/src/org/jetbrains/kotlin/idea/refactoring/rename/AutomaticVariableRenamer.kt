@@ -82,11 +82,11 @@ class AutomaticVariableRenamer(
         suggestAllNames(klass.name, newClassName)
     }
 
-    override fun getDialogTitle() = RefactoringBundle.message("rename.variables.title")
+    override fun getDialogTitle(): String = RefactoringBundle.message("rename.variables.title")
 
-    override fun getDialogDescription() = RefactoringBundle.message("rename.variables.with.the.following.names.to")
+    override fun getDialogDescription(): String = RefactoringBundle.message("rename.variables.with.the.following.names.to")
 
-    override fun entityName() = RefactoringBundle.message("entity.name.variable")
+    override fun entityName(): String = RefactoringBundle.message("entity.name.variable")
 
     override fun nameToCanonicalName(name: String, element: PsiNamedElement): String? {
         if (element !is KtNamedDeclaration) return name
@@ -147,7 +147,7 @@ open class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
 
-    override fun getOptionName() = RefactoringBundle.message("rename.variables")
+    override fun getOptionName(): String? = RefactoringBundle.message("rename.variables")
 }
 
 class AutomaticVariableRenamerFactoryForJavaClass : AutomaticVariableRenamerFactory() {

@@ -29,7 +29,7 @@ class KotlinAnnotationEntryStubImpl(
         private val hasValueArguments: Boolean
 ) : KotlinStubBaseImpl<KtAnnotationEntry>(parent, KtStubElementTypes.ANNOTATION_ENTRY), KotlinAnnotationEntryStub {
 
-    override fun getShortName() = shortName.string
+    override fun getShortName(): String = shortName.string
 
     override fun hasValueArguments() = hasValueArguments
 }

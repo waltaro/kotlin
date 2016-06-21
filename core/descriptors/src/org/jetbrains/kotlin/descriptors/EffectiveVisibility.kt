@@ -42,7 +42,7 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
         override fun relation(other: EffectiveVisibility) =
                 if (this == other || Local == other) Permissiveness.SAME else Permissiveness.LESS
 
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility(): Visibility = Visibilities.PRIVATE
     }
 
     // Effectively same as Private
@@ -50,14 +50,14 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
         override fun relation(other: EffectiveVisibility) =
                 if (this == other || Private == other) Permissiveness.SAME else Permissiveness.LESS
 
-        override fun toVisibility() = Visibilities.LOCAL
+        override fun toVisibility(): Visibility = Visibilities.LOCAL
     }
 
     object Public : EffectiveVisibility("public", publicApi = true) {
         override fun relation(other: EffectiveVisibility) =
                 if (this == other) Permissiveness.SAME else Permissiveness.MORE
 
-        override fun toVisibility() = Visibilities.PUBLIC
+        override fun toVisibility(): Visibility = Visibilities.PUBLIC
     }
 
     abstract class InternalOrPackage protected constructor(internal: Boolean) : EffectiveVisibility(
@@ -79,11 +79,11 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
     }
 
     object Internal : InternalOrPackage(true) {
-        override fun toVisibility() = Visibilities.INTERNAL
+        override fun toVisibility(): Visibility = Visibilities.INTERNAL
     }
 
     object PackagePrivate : InternalOrPackage(false) {
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility(): Visibility = Visibilities.PRIVATE
     }
 
     class Protected(val container: ClassDescriptor?) : EffectiveVisibility("protected", publicApi = true) {
@@ -121,7 +121,7 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
             is InternalOrPackage -> InternalProtected(container)
         }
 
-        override fun toVisibility() = Visibilities.PROTECTED
+        override fun toVisibility(): Visibility = Visibilities.PROTECTED
     }
 
     // Lower bound for all protected visibilities
@@ -139,7 +139,7 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
             is InternalOrPackage, is InternalProtected -> InternalProtectedBound
         }
 
-        override fun toVisibility() = Visibilities.PROTECTED
+        override fun toVisibility(): Visibility = Visibilities.PROTECTED
     }
 
     // Lower bound for internal and protected(C)
@@ -174,7 +174,7 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
             ProtectedBound -> InternalProtectedBound
         }
 
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility(): Visibility = Visibilities.PRIVATE
     }
 
     // Lower bound for internal and protected lower bound
@@ -185,7 +185,7 @@ sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = fals
             InternalProtectedBound -> Permissiveness.SAME
         }
 
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility(): Visibility = Visibilities.PRIVATE
     }
 
     enum class Permissiveness {

@@ -132,12 +132,12 @@ class PomFile(val xmlFile: XmlFile) {
         return plugin
     }
 
-    fun findKotlinPlugins() = domModel.build.plugins.plugins.filter { it.isKotlinMavenPlugin() }
-    fun findKotlinExecutions(vararg goals: String) = findKotlinExecutions().filter { it.goals.goals.any { it.rawText in goals } }
-    fun findKotlinExecutions() = findKotlinPlugins().flatMap { it.executions.executions }
+    fun findKotlinPlugins(): List<MavenDomPlugin> = domModel.build.plugins.plugins.filter { it.isKotlinMavenPlugin() }
+    fun findKotlinExecutions(vararg goals: String): List<MavenDomPluginExecution> = findKotlinExecutions().filter { it.goals.goals.any { it.rawText in goals } }
+    fun findKotlinExecutions(): List<MavenDomPluginExecution> = findKotlinPlugins().flatMap { it.executions.executions }
 
-    fun findExecutions(plugin: MavenDomPlugin) = plugin.executions.executions
-    fun findExecutions(plugin: MavenDomPlugin, vararg goals: String) = findExecutions(plugin).filter { it.goals.goals.any { it.rawText in goals } }
+    fun findExecutions(plugin: MavenDomPlugin): List<MavenDomPluginExecution> = plugin.executions.executions
+    fun findExecutions(plugin: MavenDomPlugin, vararg goals: String): List<MavenDomPluginExecution> = findExecutions(plugin).filter { it.goals.goals.any { it.rawText in goals } }
 
     fun addExecution(plugin: MavenDomPlugin, executionId: String, phase: String, goals: List<String>): MavenDomPluginExecution {
         require(goals.isNotEmpty()) { "Execution $executionId requires at least one goal but empty list has been provided" }
@@ -269,7 +269,7 @@ class PomFile(val xmlFile: XmlFile) {
     fun hasDependency(artifact: MavenId, scope: MavenArtifactScope? = null) =
             domModel.dependencies.dependencies.any { it.matches(artifact, scope) }
 
-    fun findDependencies(artifact: MavenId, scope: MavenArtifactScope? = null) =
+    fun findDependencies(artifact: MavenId, scope: MavenArtifactScope? = null): List<MavenDomDependency> =
             domModel.dependencies.dependencies.filter { it.matches(artifact, scope) }
 
     fun ensureBuild(): XmlTag = ensureElement(projectElement, "build")

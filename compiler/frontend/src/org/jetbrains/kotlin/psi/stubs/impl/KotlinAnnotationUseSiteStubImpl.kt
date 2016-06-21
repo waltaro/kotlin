@@ -28,6 +28,6 @@ class KotlinAnnotationUseSiteTargetStubImpl(
         private val target: StringRef
 ) : KotlinStubBaseImpl<KtAnnotationUseSiteTarget>(parent, KtStubElementTypes.ANNOTATION_TARGET), KotlinAnnotationUseSiteTargetStub {
 
-    override fun getUseSiteTarget() = target.string
+    override fun getUseSiteTarget(): String = target.string
 
 }

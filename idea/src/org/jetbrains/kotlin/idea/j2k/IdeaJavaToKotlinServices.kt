@@ -34,5 +34,5 @@ object IdeaJavaToKotlinServices : JavaToKotlinConverterServices {
 }
 
 object IdeaSuperMethodSearcher : SuperMethodsSearcher {
-    override fun findDeepestSuperMethods(method: PsiMethod) = method.findDeepestSuperMethods().asList()
+    override fun findDeepestSuperMethods(method: PsiMethod): List<PsiMethod> = method.findDeepestSuperMethods().asList()
 }

@@ -240,7 +240,7 @@ internal class ExpressionDecomposer private constructor(
 
     private abstract class Callable(hasArguments: HasArguments) {
         abstract var qualifier: JsExpression
-        val arguments = hasArguments.arguments
+        val arguments: MutableList<JsExpression> = hasArguments.arguments
     }
 
     private class CallableInvocationAdapter(val invocation: JsInvocation) : Callable(invocation) {

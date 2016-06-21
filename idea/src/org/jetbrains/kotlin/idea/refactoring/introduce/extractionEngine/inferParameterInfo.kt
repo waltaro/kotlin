@@ -57,11 +57,11 @@ import java.util.*
 
 internal class ParametersInfo {
     var errorMessage: AnalysisResult.ErrorMessage? = null
-    val originalRefToParameter = MultiMap.create<KtSimpleNameExpression, MutableParameter>()
+    val originalRefToParameter: MultiMap<KtSimpleNameExpression, MutableParameter> = MultiMap.create()
     val parameters = HashSet<MutableParameter>()
     val typeParameters = HashSet<TypeParameter>()
     val nonDenotableTypes = HashSet<KotlinType>()
-    val replacementMap = MultiMap.create<KtSimpleNameExpression, Replacement>()
+    val replacementMap: MultiMap<KtSimpleNameExpression, Replacement> = MultiMap.create()
 }
 
 internal fun ExtractionData.inferParametersInfo(

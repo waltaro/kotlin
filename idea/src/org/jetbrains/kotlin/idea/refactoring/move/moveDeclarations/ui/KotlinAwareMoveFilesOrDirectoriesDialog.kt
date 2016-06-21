@@ -36,10 +36,7 @@ import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.NonFocusableCheckBox
-import com.intellij.ui.RecentsManager
-import com.intellij.ui.TextFieldWithHistoryWithBrowseButton
+import com.intellij.ui.*
 import com.intellij.ui.components.JBLabelDecorator
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.ui.FormBuilder
@@ -81,7 +78,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)
 
-    override fun getPreferredFocusedComponent() = targetDirectoryField.childComponent
+    override fun getPreferredFocusedComponent(): TextFieldWithHistory? = targetDirectoryField.childComponent
 
     override fun createCenterPanel() = null
 

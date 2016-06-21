@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
+import com.google.common.collect.ImmutableSet
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator
 import com.google.dart.compiler.backend.js.ast.JsExpression
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -88,7 +90,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    override fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS
+    override fun getSupportTokens(): ImmutableSet<KtSingleValueToken> = OperatorConventions.EQUALS_OPERATIONS
 
     override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
             when {

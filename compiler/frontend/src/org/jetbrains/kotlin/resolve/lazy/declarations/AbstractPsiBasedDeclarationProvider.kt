@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.ListMultimap
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
@@ -33,9 +34,9 @@ abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManage
     protected class Index {
         // This mutable state is only modified under inside the computable
         val allDeclarations = ArrayList<KtDeclaration>()
-        val functions = ArrayListMultimap.create<Name, KtNamedFunction>()
-        val properties = ArrayListMultimap.create<Name, KtProperty>()
-        val classesAndObjects = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
+        val functions: ListMultimap<Name, KtNamedFunction> = ArrayListMultimap.create<Name, KtNamedFunction>()
+        val properties: ListMultimap<Name, KtProperty> = ArrayListMultimap.create<Name, KtProperty>()
+        val classesAndObjects: ListMultimap<Name, KtClassLikeInfo> = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
 
         fun putToIndex(declaration: KtDeclaration) {
             if (declaration is KtAnonymousInitializer || declaration is KtSecondaryConstructor) return

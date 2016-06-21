@@ -21,7 +21,7 @@ import java.util.*
 
 open class ControlFlowInfo<D> internal constructor(protected val map: MutableMap<VariableDescriptor, D> = hashMapOf()) :
         MutableMap<VariableDescriptor, D> by map {
-    open fun copy() = ControlFlowInfo(HashMap(map))
+    open fun copy(): ControlFlowInfo<D> = ControlFlowInfo(HashMap(map))
 
     fun retainAll(predicate: (VariableDescriptor) -> Boolean): ControlFlowInfo<D> {
         map.keys.retainAll(predicate)

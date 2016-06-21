@@ -57,7 +57,7 @@ class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstrac
         importsPanel.reset(settings.kotlinSettings())
     }
 
-    override fun getTabTitle() = ApplicationBundle.message("title.imports")
+    override fun getTabTitle(): String = ApplicationBundle.message("title.imports")
 }
 
 class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPanel() {

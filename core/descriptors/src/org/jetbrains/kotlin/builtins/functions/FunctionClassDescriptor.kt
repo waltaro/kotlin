@@ -97,12 +97,12 @@ class FunctionClassDescriptor(
     override fun getKind() = ClassKind.INTERFACE
     override fun getModality() = Modality.ABSTRACT
     override fun getUnsubstitutedPrimaryConstructor() = null
-    override fun getVisibility() = Visibilities.PUBLIC
+    override fun getVisibility(): Visibility = Visibilities.PUBLIC
     override fun isCompanionObject() = false
     override fun isInner() = false
     override fun isData() = false
     override fun getAnnotations() = Annotations.EMPTY
-    override fun getSource() = SourceElement.NO_SOURCE
+    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
 
     override fun getDeclaredTypeParameters() = parameters
 

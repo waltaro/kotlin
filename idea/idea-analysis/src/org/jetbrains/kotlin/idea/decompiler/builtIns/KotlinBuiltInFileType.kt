@@ -20,6 +20,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.idea.KotlinIcons
+import javax.swing.Icon
 
 object KotlinBuiltInFileType : FileType {
     override fun getName() = "kotlin_builtins"
@@ -28,7 +29,7 @@ object KotlinBuiltInFileType : FileType {
 
     override fun getDefaultExtension() = BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION
 
-    override fun getIcon() = KotlinIcons.FILE
+    override fun getIcon(): Icon = KotlinIcons.FILE
 
     override fun isBinary() = true
 

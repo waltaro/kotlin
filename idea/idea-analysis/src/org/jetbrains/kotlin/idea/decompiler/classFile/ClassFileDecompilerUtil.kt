@@ -34,7 +34,7 @@ val KOTLIN_COMPILED_FILE_ATTRIBUTE: String = "kotlin-compiled-file".apply {
     ServiceManager.getService(FileAttributeService::class.java).register(this, 1)
 }
 
-val KEY = Key.create<IsKotlinBinary>(KOTLIN_COMPILED_FILE_ATTRIBUTE)
+val KEY: Key<IsKotlinBinary> = Key.create<IsKotlinBinary>(KOTLIN_COMPILED_FILE_ATTRIBUTE)
 
 /**
  * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)

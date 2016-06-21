@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter
 import org.jetbrains.kotlin.types.Variance
@@ -44,7 +41,7 @@ object Deserialization {
     }
 
     @JvmStatic
-    fun visibility(visibility: ProtoBuf.Visibility?) = when (visibility) {
+    fun visibility(visibility: ProtoBuf.Visibility?): Visibility = when (visibility) {
         ProtoBuf.Visibility.INTERNAL -> Visibilities.INTERNAL
         ProtoBuf.Visibility.PRIVATE -> Visibilities.PRIVATE
         ProtoBuf.Visibility.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS

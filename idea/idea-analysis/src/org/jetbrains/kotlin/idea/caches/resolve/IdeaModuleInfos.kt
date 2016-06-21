@@ -132,7 +132,7 @@ data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourc
 
     override fun contentScope(): GlobalSearchScope = ModuleProductionSourceScope(module)
 
-    override fun dependencies() = module.cached(CachedValueProvider {
+    override fun dependencies(): List<IdeaModuleInfo> = module.cached(CachedValueProvider {
         CachedValueProvider.Result(
                 ideaModelDependencies(module, productionOnly = true),
                 ProjectRootModificationTracker.getInstance(module.project))
@@ -145,13 +145,13 @@ data class ModuleTestSourceInfo(override val module: Module) : ModuleSourceInfo 
 
     override fun contentScope(): GlobalSearchScope = ModuleTestSourceScope(module)
 
-    override fun dependencies() = module.cached(CachedValueProvider {
+    override fun dependencies(): List<IdeaModuleInfo> = module.cached(CachedValueProvider {
         CachedValueProvider.Result(
                 ideaModelDependencies(module, productionOnly = false),
                 ProjectRootModificationTracker.getInstance(module.project))
     })
 
-    override fun modulesWhoseInternalsAreVisible() = module.cached(CachedValueProvider {
+    override fun modulesWhoseInternalsAreVisible(): SmartList<ModuleInfo> = module.cached(CachedValueProvider {
         val list = SmartList<ModuleInfo>(module.productionSourceInfo())
 
         getRelatedProductionModule(module)?.let {
@@ -231,7 +231,7 @@ internal data class LibrarySourceInfo(val project: Project, val library: Library
 
     override val name: Name = Name.special("<sources for library ${library.name}>")
 
-    override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
+    override fun contentScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
 
     override val isLibrary: Boolean
         get() = true
@@ -265,7 +265,7 @@ internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
 
     override val name: Name = Name.special("<special module for files not under source root>")
 
-    override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
+    override fun contentScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
 
     //TODO: (module refactoring) dependency on runtime can be of use here
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)

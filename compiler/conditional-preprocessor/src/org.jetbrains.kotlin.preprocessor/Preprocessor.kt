@@ -46,7 +46,7 @@ fun createProfile(name: String, targetRoot: File): Profile {
 
 class Preprocessor(val logger: Logger = SystemOutLogger) {
 
-    val fileType = KotlinFileType.INSTANCE
+    val fileType: KotlinFileType = KotlinFileType.INSTANCE
     val jetPsiFactory: KtPsiFactory
 
     init {
@@ -67,7 +67,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
             override fun toString(): String = "Modify(${modifications.size})"
         }
 
-        override fun toString() = this.javaClass.simpleName
+        override fun toString(): String = this.javaClass.simpleName
     }
 
     fun processSources(sourceRoot: File, profile: Profile) {

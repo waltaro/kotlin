@@ -38,7 +38,7 @@ class UnreachableCodeImpl(
 ) : UnreachableCode {
 
     // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
-    override val elements = KtPsiUtil.findRootExpressions(unreachableElements)
+    override val elements: MutableSet<KtElement> = KtPsiUtil.findRootExpressions(unreachableElements)
 
     override fun getUnreachableTextRanges(element: KtElement): List<TextRange> {
         return if (element.hasChildrenInSet(reachableElements)) {

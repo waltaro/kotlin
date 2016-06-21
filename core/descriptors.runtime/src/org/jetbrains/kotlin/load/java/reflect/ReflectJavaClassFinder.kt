@@ -44,7 +44,7 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
 }
 
-fun ClassLoader.tryLoadClass(fqName: String) =
+fun ClassLoader.tryLoadClass(fqName: String): Class<*>? =
         try {
             loadClass(fqName)
         }

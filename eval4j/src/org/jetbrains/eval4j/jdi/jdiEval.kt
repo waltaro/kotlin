@@ -24,8 +24,8 @@ import java.lang.reflect.AccessibleObject
 import com.sun.jdi.Type as jdi_Type
 import com.sun.jdi.Value as jdi_Value
 
-val CLASS = Type.getType(Class::class.java)
-val OBJECT = Type.getType(Any::class.java)
+val CLASS: Type = Type.getType(Class::class.java)
+val OBJECT: Type = Type.getType(Any::class.java)
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
 class JDIEval(

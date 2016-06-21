@@ -59,7 +59,7 @@ class KotlinCallerChooser(
         return KotlinMethodNode(method, called, myProject, cancelCallback)
     }
 
-    override fun findDeepestSuperMethods(method: PsiElement) =
+    override fun findDeepestSuperMethods(method: PsiElement): Array<out PsiMethod>? =
             method.toLightMethods().singleOrNull()?.findDeepestSuperMethods()
 
     override fun getEmptyCallerText() =

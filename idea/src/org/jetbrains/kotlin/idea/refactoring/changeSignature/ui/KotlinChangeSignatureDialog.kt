@@ -75,7 +75,7 @@ class KotlinChangeSignatureDialog(
         KotlinMethodDescriptor,
         ParameterTableModelItemBase<KotlinParameterInfo>,
         KotlinCallableParameterTableModel>(project, methodDescriptor, false, context) {
-    override fun getFileType() = KotlinFileType.INSTANCE
+    override fun getFileType(): KotlinFileType = KotlinFileType.INSTANCE
 
     override fun createParametersInfoModel(descriptor: KotlinMethodDescriptor) = createParametersInfoModel(descriptor, myDefaultValueContext)
 
@@ -317,7 +317,7 @@ class KotlinChangeSignatureDialog(
         return changeInfo.getNewSignature(getMethodDescriptor().originalPrimaryCallable)
     }
 
-    override fun createVisibilityControl() = ComboBoxVisibilityPanel(
+    override fun createVisibilityControl(): ComboBoxVisibilityPanel<Visibility> = ComboBoxVisibilityPanel(
             arrayOf(Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC)
     )
 

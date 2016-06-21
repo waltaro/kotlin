@@ -40,7 +40,7 @@ class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDes
     override val type: KotlinType
         get() = value.type
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitAnnotationValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitAnnotationValue(this, data)
     override fun toString() = value.toString()
 }
 
@@ -54,7 +54,7 @@ class ArrayValue(
         assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) { "Type should be an array, but was " + type + ": " + value }
     }
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitArrayValue(this, data)
 
     val elementType: KotlinType
         get() = builtIns.getArrayElementType(type)
@@ -75,7 +75,7 @@ class BooleanValue(
 ) : ConstantValue<Boolean>(value) {
 
     override val type = builtIns.booleanType
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitBooleanValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitBooleanValue(this, data)
 
 }
 
@@ -86,7 +86,7 @@ class ByteValue(
 
     override val type = builtIns.byteType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitByteValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitByteValue(this, data)
     override fun toString(): String = "$value.toByte()"
 }
 
@@ -97,7 +97,7 @@ class CharValue(
 
     override val type = builtIns.charType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitCharValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitCharValue(this, data)
 
     override fun toString() = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
 
@@ -131,7 +131,7 @@ class DoubleValue(
 ) : ConstantValue<Double>(value) {
     override val type = builtIns.doubleType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitDoubleValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitDoubleValue(this, data)
 
     override fun toString() = "$value.toDouble()"
 }
@@ -143,7 +143,7 @@ class EnumValue(
     override val type: KotlinType
         get() = value.classValueType.sure { "Enum entry must have a class object type: " + value }
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitEnumValue(this, data)
 
     override fun toString() = "$type.${value.name}"
 
@@ -163,7 +163,7 @@ abstract class ErrorValue : ConstantValue<Unit>(Unit) {
     override val value: Unit
         get() = throw UnsupportedOperationException()
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitErrorValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitErrorValue(this, data)
 
     class ErrorValueWithMessage(val message: String) : ErrorValue() {
 
@@ -185,7 +185,7 @@ class FloatValue(
 ) : ConstantValue<Float>(value) {
     override val type = builtIns.floatType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitFloatValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitFloatValue(this, data)
 
     override fun toString() = "$value.toFloat()"
 }
@@ -197,7 +197,7 @@ class IntValue(
 
     override val type = builtIns.intType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitIntValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitIntValue(this, data)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -216,7 +216,7 @@ class KClassValue(override val type: KotlinType) :
     override val value: KotlinType
         get() = type.arguments.single().type
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitKClassValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitKClassValue(this, data)
 }
 
 class LongValue(
@@ -226,7 +226,7 @@ class LongValue(
 
     override val type = builtIns.longType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitLongValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitLongValue(this, data)
 
     override fun toString() = "$value.toLong()"
 }
@@ -237,7 +237,7 @@ class NullValue(
 
     override val type = builtIns.nullableNothingType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitNullValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitNullValue(this, data)
 
     override fun toString() = "null"
 }
@@ -249,7 +249,7 @@ class ShortValue(
 
     override val type = builtIns.shortType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitShortValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitShortValue(this, data)
 
     override fun toString() = "$value.toShort()"
 }
@@ -260,7 +260,7 @@ class StringValue(
 ) : ConstantValue<String>(value) {
     override val type = builtIns.stringType
 
-    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitStringValue(this, data)
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitStringValue(this, data)
 
     override fun toString() = "\"$value\""
 

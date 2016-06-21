@@ -88,7 +88,7 @@ class DeserializedClassDescriptor(
 
     override fun getModality() = modality
 
-    override fun getVisibility() = visibility
+    override fun getVisibility(): Visibility = visibility
 
     override fun isInner() = Flags.IS_INNER.get(classProto.flags)
 

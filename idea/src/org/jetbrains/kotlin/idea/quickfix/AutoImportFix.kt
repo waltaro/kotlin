@@ -210,7 +210,7 @@ internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFix
         emptyList<Name>()
     }
 
-    override fun getSupportedErrors() = ERRORS
+    override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
@@ -227,7 +227,7 @@ internal class MissingInvokeAutoImportFix(expression: KtExpression) : AutoImport
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
 
-    override fun getSupportedErrors() = ERRORS
+    override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
@@ -242,7 +242,7 @@ internal open class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpr
     override fun getCallTypeAndReceiver() =
             CallTypeAndReceiver.OPERATOR(element.arrayExpression!!)
 
-    override fun getSupportedErrors() = ERRORS
+    override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
 
     override fun showHint(editor: Editor) = showHint && super.showHint(editor)
 
@@ -284,7 +284,7 @@ internal class MissingDelegateAccessorsAutoImportFix(
         return super.createAction(project, editor)
     }
 
-    override fun getSupportedErrors() = ERRORS
+    override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
 
     companion object : KotlinSingleIntentionActionFactory() {
         private fun importNames(diagnostics: Collection<Diagnostic>): Collection<Name> {
@@ -325,7 +325,7 @@ internal class MissingComponentsAutoImportFix(element: KtExpression, override va
         return super.createAction(project, editor)
     }
 
-    override fun getSupportedErrors() = ERRORS
+    override fun getSupportedErrors(): Collection<DiagnosticFactory<*>> = ERRORS
 
     companion object : KotlinSingleIntentionActionFactory() {
         private fun importNames(diagnostics: Collection<Diagnostic>) =

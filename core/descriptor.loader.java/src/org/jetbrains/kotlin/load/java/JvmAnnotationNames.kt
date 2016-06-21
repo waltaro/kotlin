@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.name.FqName
 
-val NULLABLE_ANNOTATIONS = listOf(
+val NULLABLE_ANNOTATIONS: List<FqName> = listOf(
         JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
         FqName("android.support.annotation.Nullable"),
         FqName("com.android.annotations.Nullable"),
@@ -33,7 +33,7 @@ val NULLABLE_ANNOTATIONS = listOf(
 
 val JAVAX_NONNULL_ANNOTATION = FqName("javax.annotation.Nonnull")
 
-val NOT_NULL_ANNOTATIONS = listOf(
+val NOT_NULL_ANNOTATIONS: List<FqName> = listOf(
         JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
         FqName("edu.umd.cs.findbugs.annotations.NonNull"),
         FqName("android.support.annotation.NonNull"),
@@ -43,11 +43,11 @@ val NOT_NULL_ANNOTATIONS = listOf(
         FqName("lombok.NonNull")
 )
 
-val READ_ONLY_ANNOTATIONS = listOf(
+val READ_ONLY_ANNOTATIONS: List<FqName> = listOf(
         JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
 )
 
-val MUTABLE_ANNOTATIONS = listOf(
+val MUTABLE_ANNOTATIONS: List<FqName> = listOf(
         JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION
 )
 

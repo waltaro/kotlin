@@ -33,7 +33,7 @@ open class FakeFileForLightClass(
 ) : ClsFileImpl(ClassFileViewProvider(ktFile.manager, ktFile.virtualFile)) {
     override fun getPackageName() = packageFqName.asString()
 
-    override fun getStub() = stub()
+    override fun getStub(): PsiClassHolderFileStub<*> = stub()
 
     override fun getClasses() = arrayOf(lightClass())
 

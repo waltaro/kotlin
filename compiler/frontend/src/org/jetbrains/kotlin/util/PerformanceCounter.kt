@@ -203,7 +203,7 @@ internal class CounterWithExclude(name: String, vararg excludedCounters: Perform
         private val callStack = Stack<Boolean>()
         private var intervalStartTime: Long = 0
 
-        fun Stack<Boolean>.peekOrFalse() = if (isEmpty()) false else peek()
+        fun Stack<Boolean>.peekOrFalse(): Boolean = if (isEmpty()) false else peek()
 
         private fun intervalUsefulTime(callStackUpdate: Stack<Boolean>.() -> Unit): Long {
             val delta = if (callStack.peekOrFalse()) PerformanceCounter.currentTime() - intervalStartTime else 0

@@ -243,7 +243,7 @@ class ParameterNameAndTypeCompletion(
     companion object {
         private val PRIORITY_KEY = Key<Int>("ParameterNameAndTypeCompletion.PRIORITY_KEY")
 
-        val REPLACEMENT_OFFSET = OffsetKey.create("ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET")
+        val REPLACEMENT_OFFSET: OffsetKey = OffsetKey.create("ParameterNameAndTypeCompletion.REPLACEMENT_OFFSET")
     }
 
     object Weigher : LookupElementWeigher("kotlin.parameterNameAndTypePriority") {

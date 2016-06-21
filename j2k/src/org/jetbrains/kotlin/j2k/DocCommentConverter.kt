@@ -26,7 +26,7 @@ interface DocCommentConverter {
 }
 
 object EmptyDocCommentConverter: DocCommentConverter {
-    override fun convertDocComment(docComment: PsiDocComment) = docComment.text
+    override fun convertDocComment(docComment: PsiDocComment): String = docComment.text
 }
 
 fun PsiDocTag.content(): String =

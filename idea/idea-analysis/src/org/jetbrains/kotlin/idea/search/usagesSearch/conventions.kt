@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.idea.references.*
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -42,9 +44,9 @@ val INDEXING_OPERATION_NAMES = setOf(OperatorNameConventions.GET, OperatorNameCo
 
 val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
 
-val IN_OPERATIONS_TO_SEARCH = setOf(KtTokens.IN_KEYWORD)
+val IN_OPERATIONS_TO_SEARCH: Set<KtModifierKeywordToken> = setOf(KtTokens.IN_KEYWORD)
 
-val COMPARISON_OPERATIONS_TO_SEARCH = setOf(KtTokens.LT, KtTokens.GT)
+val COMPARISON_OPERATIONS_TO_SEARCH: Set<KtSingleValueToken> = setOf(KtTokens.LT, KtTokens.GT)
 
 fun Name.getOperationSymbolsToSearch(): Pair<Set<KtToken>, Class<*>?> {
     when (this) {

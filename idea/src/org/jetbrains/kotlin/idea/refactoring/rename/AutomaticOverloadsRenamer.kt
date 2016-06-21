@@ -81,7 +81,7 @@ class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
         return element.getOverloads().size > 1
     }
 
-    override fun getOptionName() = RefactoringBundle.message("rename.overloads")
+    override fun getOptionName(): String = RefactoringBundle.message("rename.overloads")
 
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isRenameOverloads
 

@@ -120,7 +120,7 @@ object Renderers {
         }
     }
 
-    @JvmField val AMBIGUOUS_CALLS = Renderer {
+    @JvmField val AMBIGUOUS_CALLS: DiagnosticParameterRenderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
         val descriptors = calls.map { it.resultingDescriptor }
         val context = RenderingContext.Impl(descriptors)

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import java.io.ByteArrayInputStream
@@ -95,7 +96,7 @@ sealed class BuiltInDefinitionFile {
         val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
         val packageFqName = nameResolver.getPackageFqName(proto.`package`.getExtension(BuiltInsProtoBuf.packageFqName))
 
-        val classesToDecompile =
+        val classesToDecompile: List<ProtoBuf.Class> =
                 if (FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES) proto.classList.filter { classProto ->
                     shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName))
                 }

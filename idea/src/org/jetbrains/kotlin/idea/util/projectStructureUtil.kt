@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VfsUtil
 import java.io.File
 
-fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
+fun Project.allModules(): List<Module> = ModuleManager.getInstance(this).modules.toList()
 
 fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
 

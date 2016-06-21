@@ -91,7 +91,7 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
             value is BoxedBasicValue ||
             value.type != null && isProgressionClass(value.type.internalName)
 
-    override fun merge(v: BasicValue, w: BasicValue) =
+    override fun merge(v: BasicValue, w: BasicValue): BasicValue =
             when {
                 v == BasicValue.UNINITIALIZED_VALUE || w == BasicValue.UNINITIALIZED_VALUE -> {
                     BasicValue.UNINITIALIZED_VALUE
