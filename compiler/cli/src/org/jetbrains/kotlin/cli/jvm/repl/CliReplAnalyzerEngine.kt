@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.resolve.repl.ReplState
 import org.jetbrains.kotlin.script.ScriptPriorities
 
-class CliReplAnalyzerEngine(private val environment: KotlinCoreEnvironment) {
+class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
     private val topDownAnalysisContext: TopDownAnalysisContext
     private val topDownAnalyzer: LazyTopDownAnalyzerForTopLevel
     private val resolveSession: ResolveSession

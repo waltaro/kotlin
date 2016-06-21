@@ -185,7 +185,7 @@ class FileScopeFactory(
     }
 
     // we use this dummy implementation of DeclarationDescriptor to check accessibility of symbols from the current package
-    private class DummyContainerDescriptor(private val file: KtFile, private val packageFragment: PackageFragmentDescriptor) : DeclarationDescriptorNonRoot {
+    private class DummyContainerDescriptor(file: KtFile, private val packageFragment: PackageFragmentDescriptor) : DeclarationDescriptorNonRoot {
         private val sourceElement = KotlinSourceElement(file)
 
         override fun getContainingDeclaration() = packageFragment

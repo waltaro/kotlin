@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
-class CompanionObjectMapping(private val builtIns: KotlinBuiltIns) {
+class CompanionObjectMapping(builtIns: KotlinBuiltIns) {
     private val classes = linkedSetOf<ClassDescriptor>()
 
     init {
