@@ -26,6 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -40,17 +41,14 @@ import org.jetbrains.kotlin.idea.PluginStartupComponent;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
-    private static final List<String> moduleKindDescriptions = asList(
-            "Plain (put to global scope)",
-            "AMD",
-            "CommonJS/node.js",
-            "UMD (detect AMD or CommonJS if available, fallback to plain)"
-    );
+    private static final Map<String, String> moduleKindDescriptions = new HashMap<String, String>();
     private static final List<String> moduleKindIds = asList(K2JsArgumentConstants.MODULE_PLAIN, K2JsArgumentConstants.MODULE_AMD,
                                                              K2JsArgumentConstants.MODULE_COMMONJS, K2JsArgumentConstants.MODULE_UMD);
     private final CommonCompilerArguments commonCompilerArguments;
@@ -72,6 +70,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JCheckBox keepAliveCheckBox;
     private JCheckBox enablePreciseIncrementalCheckBox;
     private JComboBox moduleKindComboBox;
+
+    static {
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, "AMD");
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, "CommonJS");
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
+    }
 
     public KotlinCompilerConfigurableTab(Project project) {
         this.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings();
@@ -100,10 +105,21 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @SuppressWarnings("unchecked")
     private void fillModuleKindList() {
-        for (String description : moduleKindDescriptions) {
-            // TODO: not sure if it's a right way to add items to a combo box
-            moduleKindComboBox.addItem(description);
+        for (String moduleKind : moduleKindIds) {
+            moduleKindComboBox.addItem(moduleKind);
         }
+        moduleKindComboBox.setRenderer(new ListCellRendererWrapper<String>() {
+            @Override
+            public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
+                setText(getModuleKindDescription(value));
+            }
+        });
+    }
+
+    @NotNull
+    private static String getModuleKindDescription(@NotNull String moduleKind) {
+        String result = moduleKindDescriptions.get(moduleKind);
+        return result != null ? result : "(unknown)";
     }
 
     @NotNull
@@ -141,7 +157,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     private String getSelectedModuleKind() {
-        return moduleKindIds.get(moduleKindComboBox.getSelectedIndex());
+        return (String) moduleKindComboBox.getSelectedItem();
     }
 
     @Override
@@ -180,12 +196,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         outputPrefixFile.setText(k2jsCompilerArguments.outputPrefix);
         outputPostfixFile.setText(k2jsCompilerArguments.outputPostfix);
 
-        String moduleKind = k2jsCompilerArguments.moduleKind;
-        int index = moduleKind != null ? moduleKindIds.indexOf(moduleKind) : 0;
-        if (index < 0) {
-            index = 0;
-        }
-        moduleKindComboBox.setSelectedIndex(index);
+        moduleKindComboBox.setSelectedItem(k2jsCompilerArguments.moduleKind);
     }
 
     @Override
