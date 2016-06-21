@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class GroupingMessageCollector implements MessageCollector {
+public class GroupingMessageCollector implements MessageCollector, ClearableMessageCollector {
 
     private final MessageCollector delegate;
 
@@ -31,6 +31,11 @@ public class GroupingMessageCollector implements MessageCollector {
 
     public GroupingMessageCollector(@NotNull MessageCollector delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public void clear() {
+        groupedMessages.clear();
     }
 
     @Override

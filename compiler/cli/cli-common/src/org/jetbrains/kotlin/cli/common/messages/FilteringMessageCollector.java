@@ -19,13 +19,20 @@ package org.jetbrains.kotlin.cli.common.messages;
 import com.google.common.base.Predicate;
 import org.jetbrains.annotations.NotNull;
 
-public class FilteringMessageCollector implements MessageCollector {
+public class FilteringMessageCollector implements MessageCollector, ClearableMessageCollector {
     private final MessageCollector messageCollector;
     private final Predicate<CompilerMessageSeverity> decline;
 
     public FilteringMessageCollector(@NotNull MessageCollector messageCollector, @NotNull Predicate<CompilerMessageSeverity> decline) {
         this.messageCollector = messageCollector;
         this.decline = decline;
+    }
+
+    @Override
+    public void clear() {
+        if (messageCollector instanceof ClearableMessageCollector) {
+            ((ClearableMessageCollector) messageCollector).clear();
+        }
     }
 
     @Override

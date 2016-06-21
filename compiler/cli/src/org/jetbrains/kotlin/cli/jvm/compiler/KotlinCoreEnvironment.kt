@@ -165,38 +165,52 @@ class KotlinCoreEnvironment private constructor(
         get() = projectEnvironment.project
 
     val sourceLinesOfCode: Int by lazy { countLinesOfCode(sourceFiles) }
+    
+    fun addJavaSourceRoots(newRoots: List<JavaSourceRoot>) {
+        for (root in newRoots) {
+            addJavaRoot(root)
+        }
+
+        val index = JvmDependenciesIndex(javaRoots)
+        val fileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java)
+        (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
+    }
 
     fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
             sourceFiles.sumBy {
                 val text = it.text
                 StringUtil.getLineBreakCount(it.text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
-
+    
     private fun fillClasspath(configuration: CompilerConfiguration) {
         for (root in configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)) {
             val javaRoot = root as? JvmContentRoot ?: continue
-            val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
-
-            projectEnvironment.addSourcesToClasspath(virtualFile)
-
-            val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
-                if (isValidJavaFqName(it)) {
-                    FqName(it)
-                }
-                else {
-                    report(WARNING, "Invalid package prefix name is ignored: $it")
-                    null
-                }
-            }
-
-            val rootType = when (javaRoot) {
-                is JavaSourceRoot -> JavaRoot.RootType.SOURCE
-                is JvmClasspathRoot -> JavaRoot.RootType.BINARY
-                else -> throw IllegalStateException()
-            }
-
-            javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
+            addJavaRoot(javaRoot)
         }
+    }
+
+    private fun addJavaRoot(javaRoot: JvmContentRoot) {
+        val virtualFile = contentRootToVirtualFile(javaRoot) ?: return
+
+        projectEnvironment.addSourcesToClasspath(virtualFile)
+
+        val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
+            if (isValidJavaFqName(it)) {
+                FqName(it)
+            }
+            else {
+                report(WARNING, "Invalid package prefix name is ignored: $it")
+                null
+            }
+        }
+
+        val rootType = when (javaRoot) {
+            is JavaSourceRoot -> JavaRoot.RootType.SOURCE
+            is JvmClasspathRoot -> JavaRoot.RootType.BINARY
+            else -> throw IllegalStateException()
+        }
+
+        javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
     }
 
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
