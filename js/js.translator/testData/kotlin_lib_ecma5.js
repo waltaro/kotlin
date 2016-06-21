@@ -186,8 +186,7 @@
             //noinspection JSUnfilteredForInLoop
             Object.defineProperty(constructor, innerTypeName, {
                 get: innerType,
-                configurable: true,
-                enumerable: true
+                configurable: true
             });
         }
     }

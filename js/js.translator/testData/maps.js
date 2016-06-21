@@ -1138,6 +1138,5 @@
 
     Object.defineProperty(Kotlin, "ComplexHashSet", { get : function () { return Kotlin.HashSet; }});
 
-    Kotlin.lazyInitClasses = Kotlin.lazyInitClasses || [];
-    Kotlin.lazyInitClasses.push(lazyInitClasses);
+    Kotlin.createDefinition(lazyInitClasses, Kotlin);
 }(Kotlin));

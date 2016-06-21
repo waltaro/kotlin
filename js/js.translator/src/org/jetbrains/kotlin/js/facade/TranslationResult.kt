@@ -36,7 +36,6 @@ import java.io.File
 import java.util.ArrayList
 
 abstract class TranslationResult protected constructor(val diagnostics: Diagnostics) {
-
     class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
 
     class Success(
@@ -47,6 +46,9 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             private val importedModules: List<String>,
             private val moduleDescriptor: ModuleDescriptor
     ) : TranslationResult(diagnostics) {
+        @Suppress("unused")
+        fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
+
         fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
             val output = TextOutputImpl()
             val sourceMapBuilder = when {
@@ -76,7 +78,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     data = moduleDescriptor,
                     kind = config.moduleKind,
                     imported = importedModules
-                );
+                )
                 val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(moduleDescription)
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)

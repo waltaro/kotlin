@@ -320,8 +320,6 @@
             }
     });
 
-    Kotlin.Annotation = Kotlin.createTraitNow(null);
-
     Kotlin.Enum = Kotlin.createClassNow(null,
         function () {
             this.name$ = void 0;
@@ -1220,8 +1218,7 @@
         }
         return obj1;
     };
-    
-    Kotlin.lazyInitClasses = Kotlin.lazyInitClasses || [];
-    Kotlin.lazyInitClasses.push(lazyInitClasses);
+
+    Kotlin.createDefinition(lazyInitClasses, Kotlin);
 })(Kotlin);
 

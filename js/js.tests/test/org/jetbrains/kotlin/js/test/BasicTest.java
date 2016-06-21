@@ -335,7 +335,6 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return configBuilder.build();
     }
 
-    @SuppressWarnings("EmptyMethod")
     protected void setupConfig(@NotNull LibrarySourcesConfig.Builder builder) {
         // Do nothing by default, expect inheritors to implement this method
     }
