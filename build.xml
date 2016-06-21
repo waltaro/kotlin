@@ -109,6 +109,8 @@
         <include name="js/js.parser/src"/>
         <include name="js/js.serializer/src"/>
         <include name="plugins/annotation-collector/src"/>
+        <include name="plugins/annotation-processing/src"/>
+        <include name="plugins/java-model-wrappers/src"/>
     </dirset>
 
     <property name="idea.out" value="${basedir}/out/production"/>
@@ -132,6 +134,8 @@
         <include name="light-classes/**"/>
         <include name="plugin-api/**"/>
         <include name="annotation-collector/**"/>
+        <include name="annotation-processing/**"/>
+        <include name="java-model-wrappers/**"/>
         <include name="builtins-serializer/**"/>
         <include name="js.dart-ast/**"/>
         <include name="js.translator/**"/>
@@ -234,6 +238,8 @@
             <fileset dir="compiler/light-classes/src"/>
             <fileset dir="compiler/plugin-api/src"/>
             <fileset dir="plugins/annotation-collector/src"/>
+            <fileset dir="plugins/annotation-processing/src"/>
+            <fileset dir="plugins/java-model-wrappers/src"/>
             <fileset dir="compiler/serialization/src"/>
             <fileset dir="compiler/util/src"/>
             <fileset dir="js/js.dart-ast/src"/>
