@@ -22,6 +22,9 @@ import org.gradle.api.tasks.compile.AbstractCompile
 public class SubpluginOption(val key: String, val value: String)
 
 public interface KotlinGradleSubplugin {
+    public val isBundled: Boolean
+        get() = false
+    
     public fun isApplicable(project: Project, task: AbstractCompile): Boolean
     public fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption>
     public fun getPluginName(): String
