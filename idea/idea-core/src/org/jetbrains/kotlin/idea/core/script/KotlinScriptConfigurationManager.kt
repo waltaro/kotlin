@@ -55,24 +55,33 @@ class KotlinScriptConfigurationManager(
     init {
         reloadScriptDefinitions()
 
-        dumbService.runWhenSmart {
-            // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
-            runReadAction { cacheAllScriptsExtraImports() }
+        // TODO: we should only call initial caching once
+        // TODO:  this is workaround for FileTypeIndex being not always ready even when in smart mode
+        project.messageBus.connect().subscribe(DumbService.DUMB_MODE, object : DumbService.DumbModeListener {
+            override fun enteredDumbMode() {
+                // do nothing
+            }
 
-            project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
-                override fun after(events: List<VFileEvent>) {
-                    val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(events.mapNotNull { it.file })?.any() ?: false
-                    if (isChanged) {
-                        // TODO: consider more fine-grained update
-                        cacheLock.write {
-                            allScriptsClasspathCache = null
-                            allLibrarySourcesCache = null
-                        }
-                        notifyRootsChanged()
+            override fun exitDumbMode() {
+                // TODO: sort out read/write action business and if possible make it lazy (e.g. move to getAllScriptsClasspath)
+                runReadAction {
+                    val potentialFiles = scriptDefinitionProvider.getAllKnownFileTypes()
+                            .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) }
+                    updateExternalImportsCache(potentialFiles) {
+                        invalidateLocalCaches()
                     }
                 }
-            })
-        }
+            }
+        })
+
+        project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
+            override fun after(events: List<VFileEvent>) {
+                updateExternalImportsCache(events.mapNotNull { it.file }) {
+                    invalidateLocalCaches()
+                    notifyRootsChanged()
+                }
+            }
+        })
     }
 
     private var allScriptsClasspathCache: List<VirtualFile>? = null
@@ -160,6 +169,21 @@ class KotlinScriptConfigurationManager(
                         .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) })
         }
     }
+
+    private fun updateExternalImportsCache(files: Iterable<VirtualFile>, onChange: () -> Unit) {
+        val isChanged = scriptExternalImportsProvider?.updateExternalImportsCache(files)?.any() ?: false
+        if (isChanged) {
+            onChange()
+        }
+    }
+
+    private fun invalidateLocalCaches() {
+        cacheLock.write {
+            allScriptsClasspathCache = null
+            allLibrarySourcesCache = null
+        }
+    }
+
 
     companion object {
         @JvmStatic
