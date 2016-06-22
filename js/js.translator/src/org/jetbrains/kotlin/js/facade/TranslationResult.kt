@@ -46,6 +46,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             private val importedModules: List<String>,
             private val moduleDescriptor: ModuleDescriptor
     ) : TranslationResult(diagnostics) {
+        // This method is used from try.kotl.in
         @Suppress("unused")
         fun getCode(): String = getCode(TextOutputImpl(), sourceMapBuilder = null)
 
