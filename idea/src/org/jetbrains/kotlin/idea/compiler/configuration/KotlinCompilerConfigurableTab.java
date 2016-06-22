@@ -41,16 +41,11 @@ import org.jetbrains.kotlin.idea.PluginStartupComponent;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
-
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
-    private static final Map<String, String> moduleKindDescriptions = new HashMap<String, String>();
-    private static final List<String> moduleKindIds = asList(K2JsArgumentConstants.MODULE_PLAIN, K2JsArgumentConstants.MODULE_AMD,
-                                                             K2JsArgumentConstants.MODULE_COMMONJS, K2JsArgumentConstants.MODULE_UMD);
+    private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<String, String>();
     private final CommonCompilerArguments commonCompilerArguments;
     private final K2JSCompilerArguments k2jsCompilerArguments;
     private final CompilerSettings compilerSettings;
@@ -105,7 +100,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @SuppressWarnings("unchecked")
     private void fillModuleKindList() {
-        for (String moduleKind : moduleKindIds) {
+        for (String moduleKind : moduleKindDescriptions.keySet()) {
             moduleKindComboBox.addItem(moduleKind);
         }
         moduleKindComboBox.setRenderer(new ListCellRendererWrapper<String>() {
@@ -119,7 +114,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @NotNull
     private static String getModuleKindDescription(@NotNull String moduleKind) {
         String result = moduleKindDescriptions.get(moduleKind);
-        return result != null ? result : "(unknown)";
+        assert result != null : "Module kind " + moduleKind + " was not added to combobox, therefore it should not be here";
+        return result;
     }
 
     @NotNull
