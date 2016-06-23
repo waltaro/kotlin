@@ -9,7 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" name="intellij-core" level="project" />
-    <orderEntry type="library" name="asm" level="project" />
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="annotation-processing" />
