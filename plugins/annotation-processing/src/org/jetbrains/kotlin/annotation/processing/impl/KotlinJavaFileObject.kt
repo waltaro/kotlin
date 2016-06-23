@@ -24,7 +24,7 @@ class KotlinJavaFileObject(val file: File) : JavaFileObject {
 
     override fun getName() = file.name
 
-    override fun openWriter() = file.bufferedWriter()
+    override fun openWriter() = file.writer()
 
     override fun openInputStream() = file.inputStream()
 
@@ -36,7 +36,7 @@ class KotlinJavaFileObject(val file: File) : JavaFileObject {
 
     override fun toUri() = file.toURI()
 
-    override fun openReader(ignoreEncodingErrors: Boolean) = file.bufferedReader()
+    override fun openReader(ignoreEncodingErrors: Boolean) = file.reader()
 
     override fun delete() = file.delete()
     
