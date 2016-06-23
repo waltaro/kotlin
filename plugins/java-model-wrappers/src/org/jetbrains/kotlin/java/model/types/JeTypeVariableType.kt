@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.java.model.types
 
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import javax.lang.model.type.TypeKind
@@ -24,9 +25,15 @@ import javax.lang.model.type.TypeMirror
 import javax.lang.model.type.TypeVariable
 import javax.lang.model.type.TypeVisitor
 
-class JeTypeVariableType(override val psiType: PsiClassType, val parameter: PsiTypeParameter) : JeAbstractType(), TypeVariable {
+class JeTypeVariableType(
+        override val psiType: PsiClassType, 
+        val parameter: PsiTypeParameter
+) : JePsiType(), JeTypeWithManager, TypeVariable {
     override fun getKind() = TypeKind.TYPEVAR
     override fun <R : Any?, P : Any?> accept(v: TypeVisitor<R, P>, p: P) = v.visitTypeVariable(this, p)
+
+    override val psiManager: PsiManager
+        get() = parameter.manager
 
     override fun getLowerBound(): TypeMirror? {
         TODO()
