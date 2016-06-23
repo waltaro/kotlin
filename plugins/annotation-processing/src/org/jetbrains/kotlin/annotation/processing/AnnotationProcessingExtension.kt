@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.annotation
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.annotation.processing.impl.*
@@ -56,7 +53,7 @@ class AnnotationProcessingExtension(
         val processors = loadAnnotationProcessors(annotationProcessingClasspath)
         if (processors.isEmpty()) return null
         
-        val analysisContext = AnalysisContext(bindingContext, hashMapOf())
+        val analysisContext = AnalysisContext(hashMapOf())
         analysisContext.analyzeFiles(files)
         
         val options = emptyMap<String, String>()
@@ -87,7 +84,7 @@ class AnnotationProcessingExtension(
         }
 
         // Round 2
-        val round2Environment = KotlinRoundEnvironment(analysisContext, isProcessingOver = true)
+        val round2Environment = KotlinRoundEnvironment(AnalysisContext(hashMapOf()), isProcessingOver = true)
         for (processor in processors) {
             processor.process(emptySet(), round2Environment)
         }
@@ -102,9 +99,7 @@ class AnnotationProcessingExtension(
     } 
 }
 
-internal class AnalysisContext(
-        val bindingContext: BindingContext, 
-        val annotationsMap: MutableMap<String, MutableList<PsiModifierListOwner>>)
+internal class AnalysisContext(val annotationsMap: MutableMap<String, MutableList<PsiModifierListOwner>>)
 
 private fun AnalysisContext.analyzeFiles(files: Collection<KtFile>) {
     for (file in files) {
