@@ -2297,6 +2297,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("noFakeDescriptorForObject.kt")
+                public void testNoFakeDescriptorForObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/noFakeDescriptorForObject.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("overloads.kt")
                 public void testOverloads() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/overloads.kt");
