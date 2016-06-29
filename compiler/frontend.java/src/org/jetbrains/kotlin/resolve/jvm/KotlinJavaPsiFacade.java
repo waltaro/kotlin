@@ -119,11 +119,16 @@ public class KotlinJavaPsiFacade {
     public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
         KotlinPsiElementFinderWrapper[] finders = finders();
 
-        if (finders.length == 1) {
-            return ((KotlinPsiElementFinderImpl) finders[0]).knownClassNamesInPackage(packageFqName);
+        if (finders.length != 1) {
+            for (KotlinPsiElementFinderWrapper finder : finders) {
+                if (!(finder instanceof KotlinPsiElementFinderImpl)) continue;
+                // This assertion is needed to be sure that optimization was not accidentally disabled
+                // There is an important optimization based on this assumption, please try to preserve the invariant if it's possible
+                assert !((KotlinPsiElementFinderImpl) finder).isCliFileManager : "There must be the only one finder for a CLI compiler";
+            }
         }
 
-        return null;
+        return ((KotlinPsiElementFinderImpl) finders[0]).knownClassNamesInPackage(packageFqName);
     }
 
     @NotNull
