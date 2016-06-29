@@ -54,6 +54,8 @@ import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
+import com.intellij.util.concurrency.AppExecutorUtil
+import com.intellij.util.concurrency.AppScheduledExecutorService
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.JavaElementFinder
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
@@ -339,6 +341,9 @@ class KotlinCoreEnvironment private constructor(
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.parentDisposable)
                 ZipHandler.clearFileAccessorCache()
+
+                val service = AppExecutorUtil.getAppScheduledExecutorService() as AppScheduledExecutorService
+                service.shutdownAppScheduledExecutorService()
             }
         }
 
