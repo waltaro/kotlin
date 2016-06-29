@@ -24,6 +24,7 @@ public class CapturedParamInfo extends ParameterInfo {
     public final CapturedParamDesc desc;
     private final String newFieldName;
     private final boolean skipInConstructor;
+    private boolean syntheticallyRemmaped;
 
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
         super(desc.getType(), skipped, index, remapIndex, -1);
@@ -63,6 +64,7 @@ public class CapturedParamInfo extends ParameterInfo {
                 desc, newFieldName, isSkipped, getIndex(), getRemapValue(), skipInConstructor, newDeclarationIndex
         );
         result.setLambda(getLambda());
+        result.setSyntheticallyRemmaped(syntheticallyRemmaped);
         return result;
     }
 
@@ -73,5 +75,13 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public boolean isSkipInConstructor() {
         return skipInConstructor;
+    }
+
+    public boolean isSyntheticallyRemmaped() {
+        return syntheticallyRemmaped;
+    }
+
+    public void setSyntheticallyRemmaped(boolean syntheticallyRemmaped) {
+        this.syntheticallyRemmaped = syntheticallyRemmaped;
     }
 }

@@ -388,6 +388,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/argumentOrder"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("boundFunctionReference.kt")
+        public void testBoundFunctionReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/boundFunctionReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("boundFunctionReference2.kt")
+        public void testBoundFunctionReference2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/boundFunctionReference2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("captured.kt")
         public void testCaptured() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/argumentOrder/captured.kt");
