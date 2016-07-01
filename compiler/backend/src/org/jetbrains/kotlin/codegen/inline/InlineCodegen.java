@@ -23,6 +23,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.CompilationException;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
 import org.jetbrains.kotlin.codegen.*;
@@ -195,7 +196,7 @@ public class InlineCodegen extends CallGenerator {
         CallableMemberDescriptor contextDescriptor = codegen.getContext().getContextDescriptor();
         PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(contextDescriptor);
         MethodNode node = nodeAndSmap != null ? nodeAndSmap.getNode() : null;
-        throw new CompilationException(
+        throw CompilationException.createJvmBackendException(
                 "Couldn't inline method call '" + functionDescriptor.getName() + "' into\n" +
                 contextDescriptor + "\n" +
                 (element != null ? element.getText() : "<no source>") +

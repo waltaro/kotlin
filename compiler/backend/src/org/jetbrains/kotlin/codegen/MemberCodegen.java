@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.CompilationException;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.*;
@@ -188,7 +189,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 throw e;
             }
             catch (Exception e) {
-                throw new CompilationException("Failed to generate function " + functionOrProperty.getName(), e, functionOrProperty);
+                throw CompilationException.createJvmBackendException("Failed to generate function " + functionOrProperty.getName(), e, functionOrProperty);
             }
         }
         else if (functionOrProperty instanceof KtProperty) {
@@ -202,7 +203,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 throw e;
             }
             catch (Exception e) {
-                throw new CompilationException("Failed to generate property " + functionOrProperty.getName(), e, functionOrProperty);
+                throw CompilationException.createJvmBackendException("Failed to generate property " + functionOrProperty.getName(), e, functionOrProperty);
             }
         }
         else {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
@@ -26,9 +26,22 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 public class CompilationException extends RuntimeException {
     private final PsiElement element;
 
-    public CompilationException(@NotNull String message, @Nullable Throwable cause, @Nullable PsiElement element) {
-        super(getMessage(message, cause, element), cause);
+    private CompilationException(
+            @NotNull String subsystemName,
+            @NotNull String message,
+            @Nullable Throwable cause,
+            @Nullable PsiElement element
+    ) {
+        super(getMessage(subsystemName, message, cause, element), cause);
         this.element = element;
+    }
+
+    public static CompilationException createJvmBackendException(
+            @NotNull String message,
+            @Nullable Throwable cause,
+            @Nullable PsiElement element
+    ) {
+        return new CompilationException("Back-end (JVM)", message, cause, element);
     }
 
     @Nullable
@@ -45,12 +58,17 @@ public class CompilationException extends RuntimeException {
         return "unknown";
     }
 
-    public static String getMessage(@NotNull final String message, @Nullable final Throwable cause, @Nullable final PsiElement element) {
+    private static String getMessage(
+            @NotNull final String subsystemName,
+            @NotNull final String message,
+            @Nullable final Throwable cause,
+            @Nullable final PsiElement element
+    ) {
         return ApplicationManager.getApplication().runReadAction(new Computable<String>() {
             @Override
             public String compute() {
                 StringBuilder result =
-                        new StringBuilder("Back-end (JVM) Internal error: ").append(message).append("\n");
+                        new StringBuilder(subsystemName + " Internal error: ").append(message).append("\n");
                 if (cause != null) {
                     String causeMessage = cause.getMessage();
                     result.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");

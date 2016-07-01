@@ -25,6 +25,7 @@ import kotlin.jvm.functions.Function1;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.CompilationException;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
@@ -537,7 +538,7 @@ public class FunctionCodegen {
         }
         catch (Throwable t) {
             String bytecode = renderByteCodeIfAvailable(mv);
-            throw new CompilationException(
+            throw CompilationException.createJvmBackendException(
                     "wrong code generated\n" +
                     (description != null ? " for " + description : "") +
                     t.getClass().getName() +

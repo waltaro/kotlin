@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.CompilationException;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -80,7 +81,7 @@ public abstract class TransformationMethodVisitor extends MethodVisitor {
             delegate.visitEnd();
         }
         catch (Throwable t) {
-            throw new CompilationException("Couldn't transform method node: " + InlineCodegenUtil.getNodeText(methodNode), t, null);
+            throw CompilationException.createJvmBackendException("Couldn't transform method node: " + InlineCodegenUtil.getNodeText(methodNode), t, null);
         }
     }
 

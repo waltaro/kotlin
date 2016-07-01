@@ -32,6 +32,7 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.CompilationException;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -308,7 +309,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         catch (Throwable error) {
             String message = error.getMessage();
-            throw new CompilationException(message != null ? message : "null", error, selector);
+            throw CompilationException.createJvmBackendException(message != null ? message : "null", error, selector);
         }
     }
 
