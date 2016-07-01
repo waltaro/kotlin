@@ -44,6 +44,14 @@ public class CompilationException extends RuntimeException {
         return new CompilationException("Back-end (JVM)", message, cause, element);
     }
 
+    public static CompilationException createFrontEndException(
+            @NotNull String message,
+            @Nullable Throwable cause,
+            @Nullable PsiElement element
+    ) {
+        return new CompilationException("Front-end", message, cause, element);
+    }
+
     @Nullable
     public PsiElement getElement() {
         return element;
