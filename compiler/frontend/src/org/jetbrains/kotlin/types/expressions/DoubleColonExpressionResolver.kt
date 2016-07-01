@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import javax.inject.Inject
 
 sealed class DoubleColonLHS(val type: KotlinType) {
-    class Expression(typeInfo: KotlinTypeInfo) : DoubleColonLHS(typeInfo.type!!) {
+    class Expression(typeInfo: KotlinTypeInfo, val isNonCompanionObject: Boolean) : DoubleColonLHS(typeInfo.type!!) {
         val dataFlowInfo: DataFlowInfo = typeInfo.dataFlowInfo
     }
 
@@ -163,8 +163,10 @@ class DoubleColonExpressionResolver(
     private fun resolveDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext): DoubleColonLHS? {
         val resultForExpr = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
         if (resultForExpr != null) {
-            val lhs = resultForExpr.lhs
-            if (lhs != null) {
+            val lhs = resultForExpr.lhs as DoubleColonLHS.Expression?
+            // If expression result is a (non-companion) object, we remember this and skip it here, because there are valid situations
+            // where another type (representing another classifier) should win
+            if (lhs != null && !lhs.isNonCompanionObject) {
                 return resultForExpr.commit()
             }
         }
@@ -174,6 +176,12 @@ class DoubleColonExpressionResolver(
         }
         if (resultForType != null) {
             val lhs = resultForType.lhs
+            if (resultForExpr != null && lhs?.type == resultForExpr.lhs?.type) {
+                // If we skipped an object expression result before and the type result is the same, this means that
+                // there were no other classifier except that object that could win. We prefer to treat the LHS as an expression here,
+                // to have a bound callable reference / class literal
+                return resultForExpr.commit()
+            }
             if (lhs != null) {
                 return resultForType.commit()
             }
@@ -234,13 +242,17 @@ class DoubleColonExpressionResolver(
             if (resultingDescriptor is FakeCallableDescriptorForObject) {
                 val classDescriptor = resultingDescriptor.classDescriptor
                 if (classDescriptor.companionObjectDescriptor != null) return null
+
+                if (DescriptorUtils.isNonCompanionObject(classDescriptor)) {
+                    return DoubleColonLHS.Expression(typeInfo, isNonCompanionObject = true)
+                }
             }
 
             // Check if this is resolved to a function (with the error "arguments expected"), such as in "Runnable::class"
             if (expression.canBeConsideredProperType() && resultingDescriptor !is VariableDescriptor) return null
         }
 
-        return DoubleColonLHS.Expression(typeInfo)
+        return DoubleColonLHS.Expression(typeInfo, isNonCompanionObject = false)
     }
 
     private fun resolveTypeOnLHS(
